@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.py[cod]
+tmp/
+*.zip
+data/
+data_cleaned/
+blur_review/
+checkpoints/
+runs/

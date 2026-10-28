@@ -1,0 +1,39 @@
+Checked at: 2026-10-27T20:29:38.474250+07:00
+$ python -c from cyclegan import ArchitectureConfig, Generator, PatchDiscriminator; print(ArchitectureConfig())
+ArchitectureConfig(architecture_version='resnet_patchgan_v1', channels=3, generator_filters=64, discriminator_filters=64, residual_blocks=9, norm_eps=1e-05, init_std=0.02)
+
+exit_code=0
+
+$ python -m unittest discover -s tests -v
+PASS G_AB: (1, 3, 256, 256), range=[-0.999464, 0.995178], finite outputs/input+parameter gradients; parameters=11378179
+PASS G_BA: (1, 3, 256, 256), range=[-0.996568, 0.993153], finite outputs/input+parameter gradients; parameters=11378179
+PASS D_A: (1, 1, 30, 30), range=[-3.906024, 4.172482], finite outputs/input+parameter gradients; parameters=2764737
+PASS D_B: (1, 1, 30, 30), range=[-3.370804, 4.554800], finite outputs/input+parameter gradients; parameters=2764737
+test_corrupt_cleaned_image_is_reported (test_audit_archive.ArchiveAuditTests.test_corrupt_cleaned_image_is_reported) ... ok
+test_identical_bytes_across_train_test_are_reported (test_audit_archive.ArchiveAuditTests.test_identical_bytes_across_train_test_are_reported) ... ok
+test_reads_archive_without_modifying_data_and_flags_wrong_metadata (test_audit_archive.ArchiveAuditTests.test_reads_archive_without_modifying_data_and_flags_wrong_metadata) ... ok
+test_config_round_trip_and_rejects_invalid_values (test_models.ModelTests.test_config_round_trip_and_rejects_invalid_values) ... ok
+test_default_models_256_forward_backward (test_models.ModelTests.test_default_models_256_forward_backward) ... ok
+test_input_contract_rejects_invalid_images (test_models.ModelTests.test_input_contract_rejects_invalid_images) ... ok
+test_instances_have_independent_parameters_and_storage (test_models.ModelTests.test_instances_have_independent_parameters_and_storage) ... ok
+test_rectangular_batch_and_eval (test_models.ModelTests.test_rectangular_batch_and_eval) ... ok
+test_state_dict_round_trip_preserves_outputs (test_models.ModelTests.test_state_dict_round_trip_preserves_outputs) ... ok
+test_weight_initialization_and_raw_patch_scores (test_models.ModelTests.test_weight_initialization_and_raw_patch_scores) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 7.008s
+
+OK
+
+exit_code=0
+
+$ python scripts/audit_archive.py preproc.zip --output docs/bukti/audit_dataset.json
+Audit written to docs\bukti\audit_dataset.json; cleaned=2633, non-RGB=7, metadata missing=240
+Audit records findings; exit code 0 does not mean the dataset has no anomalies.
+
+exit_code=0
+
+Additional assertions (read-only dataset and local document links):
+PASS audit assertions: split counts, 2633 decoded 256x256 images, 7 grayscale, 240 misplaced metadata paths with candidates, 2633 original copies, 25 duplicate groups/1 cross-split, CSV partition/CRC, notebook not executed, archive SHA-256 unchanged.
+PASS local documentation links: 14.
+exit_code=0

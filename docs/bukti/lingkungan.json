@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-27T20:26:26.871265+07:00",
+  "os": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.3",
+  "torch": "2.5.1+cu121",
+  "pillow": "12.3.0",
+  "cuda_build": "12.1",
+  "cuda_available": true,
+  "model_tests_device": "cpu",
+  "model_tests_threads": 4,
+  "model_tests_seed": 7,
+  "guide_path": "C:\\Users\\ASUS\\Downloads\\[CAK4KBB3 2026-1] Panduan Proyek 1 - Vibe Coding.pdf",
+  "guide_sha256": "7e35bc883b21b5f5bb6e44d11b8ab13744fc2329c5263fb9ffb0e1204eeb0dc2",
+  "gpu_name": "NVIDIA GeForce RTX 3060 Laptop GPU",
+  "gpu_total_memory_bytes": 6441926656
+}

@@ -1,0 +1,204 @@
+Checked at: 2026-10-27T22:35:59.919936+07:00
+$ C:\Users\ASUS\AppData\Local\Programs\Python\Python312\python.exe -m unittest discover -s tests -v
+PASS G_AB: (1, 3, 256, 256), range=[-0.999464, 0.995178], finite outputs/input+parameter gradients; parameters=11378179
+PASS G_BA: (1, 3, 256, 256), range=[-0.996568, 0.993153], finite outputs/input+parameter gradients; parameters=11378179
+PASS D_A: (1, 1, 30, 30), range=[-3.906024, 4.172482], finite outputs/input+parameter gradients; parameters=2764737
+PASS D_B: (1, 1, 30, 30), range=[-3.370804, 4.554800], finite outputs/input+parameter gradients; parameters=2764737
+test_corrupt_cleaned_image_is_reported (test_audit_archive.ArchiveAuditTests.test_corrupt_cleaned_image_is_reported) ... ok
+test_identical_bytes_across_train_test_are_reported (test_audit_archive.ArchiveAuditTests.test_identical_bytes_across_train_test_are_reported) ... ok
+test_reads_archive_without_modifying_data_and_flags_wrong_metadata (test_audit_archive.ArchiveAuditTests.test_reads_archive_without_modifying_data_and_flags_wrong_metadata) ... ok
+test_ambiguous_metadata_fails (test_data.DataTests.test_ambiguous_metadata_fails) ... ok
+test_archive_traversal_is_rejected (test_data.DataTests.test_archive_traversal_is_rejected) ... ok
+test_augmentation_varies_on_train_but_not_on_test (test_data.DataTests.test_augmentation_varies_on_train_but_not_on_test) ... ok
+test_cli_rejects_unpinned_source (test_data.DataTests.test_cli_rejects_unpinned_source) ... ok
+test_domain_conflict_fails (test_data.DataTests.test_domain_conflict_fails) ... ok
+test_loaders_keep_eval_domains_separate_and_batch_last_samples (test_data.DataTests.test_loaders_keep_eval_domains_separate_and_batch_last_samples) ... ok
+test_manifest_traversal_empty_split_and_corrupt_image_fail (test_data.DataTests.test_manifest_traversal_empty_split_and_corrupt_image_fail) ... ok
+test_normalization_keeps_rgb_channel_order_and_test_is_deterministic (test_data.DataTests.test_normalization_keeps_rgb_channel_order_and_test_is_deterministic) ... ok
+test_preparation_reconciles_rgb_blur_and_leak_without_changing_sources (test_data.DataTests.test_preparation_reconciles_rgb_blur_and_leak_without_changing_sources) ... ok
+test_source_byte_mismatch_fails (test_data.DataTests.test_source_byte_mismatch_fails) ... ok
+test_source_mismatch_fails_without_publishing_partial_output (test_data.DataTests.test_source_mismatch_fails_without_publishing_partial_output) ... ok
+test_config_round_trip_and_rejects_invalid_values (test_models.ModelTests.test_config_round_trip_and_rejects_invalid_values) ... ok
+test_default_models_256_forward_backward (test_models.ModelTests.test_default_models_256_forward_backward) ... ok
+test_input_contract_rejects_invalid_images (test_models.ModelTests.test_input_contract_rejects_invalid_images) ... ok
+test_instances_have_independent_parameters_and_storage (test_models.ModelTests.test_instances_have_independent_parameters_and_storage) ... ok
+test_rectangular_batch_and_eval (test_models.ModelTests.test_rectangular_batch_and_eval) ... ok
+test_state_dict_round_trip_preserves_outputs (test_models.ModelTests.test_state_dict_round_trip_preserves_outputs) ... ok
+test_weight_initialization_and_raw_patch_scores (test_models.ModelTests.test_weight_initialization_and_raw_patch_scores) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 10.121s
+
+OK
+
+exit_code=0
+
+$ C:\Users\ASUS\AppData\Local\Programs\Python\Python312\python.exe scripts/check_data.py --root data/horse2zebra --output docs/bukti/pemeriksaan_dataset_final_tanpa_zip.json
+{
+  "checked_at": "2026-10-27T15:36:44.781670+00:00",
+  "device": "cpu",
+  "seed": 7,
+  "torch": "2.5.1+cu121",
+  "python": "3.12.3",
+  "pillow": "12.3.0",
+  "manifest_sha256": "fe9d4e3a940fb9167fead81b21123ed4b12e09487e3a336a695f7d0681e38f2f",
+  "counts": {
+    "trainA": 1040,
+    "trainB": 1311,
+    "testA": 118,
+    "testB": 139
+  },
+  "modes": {
+    "RGB": 2608
+  },
+  "sizes": {
+    "(256, 256)": 2608
+  },
+  "unique_pixel_hashes": 2608,
+  "epochs": {
+    "train": {
+      "samples": 1311,
+      "batches": 328,
+      "range": [
+        -1.0,
+        1.0
+      ]
+    },
+    "testA": {
+      "samples": 118,
+      "batches": 30,
+      "range": [
+        -1.0,
+        1.0
+      ]
+    },
+    "testB": {
+      "samples": 139,
+      "batches": 35,
+      "range": [
+        -1.0,
+        1.0
+      ]
+    }
+  },
+  "models": {
+    "G_AB": {
+      "input": [
+        1,
+        3,
+        256,
+        256
+      ],
+      "output": [
+        1,
+        3,
+        256,
+        256
+      ],
+      "finite": true,
+      "range": [
+        -0.9999303817749023,
+        0.9999721646308899
+      ]
+    },
+    "G_BA": {
+      "input": [
+        1,
+        3,
+        256,
+        256
+      ],
+      "output": [
+        1,
+        3,
+        256,
+        256
+      ],
+      "finite": true,
+      "range": [
+        -0.9998557567596436,
+        0.9999583959579468
+      ]
+    },
+    "D_A": {
+      "input": [
+        1,
+        3,
+        256,
+        256
+      ],
+      "output": [
+        1,
+        1,
+        30,
+        30
+      ],
+      "finite": true,
+      "range": [
+        -3.209232807159424,
+        4.092151165008545
+      ]
+    },
+    "D_B": {
+      "input": [
+        1,
+        3,
+        256,
+        256
+      ],
+      "output": [
+        1,
+        1,
+        30,
+        30
+      ],
+      "finite": true,
+      "range": [
+        -6.123821258544922,
+        2.8764491081237793
+      ]
+    }
+  },
+  "training_performed": false
+}
+
+exit_code=0
+
+$ C:\Users\ASUS\AppData\Local\Programs\Python\Python312\python.exe scripts/prepare_data.py --help
+usage: prepare_data.py [-h] [--preproc PREPROC] [--source SOURCE]
+                       [--output OUTPUT]
+
+Optional preparation from two source ZIPs; not needed to use data/horse2zebra.
+Requires the original preprocessing ZIP and Kaggle ZIP. An already prepared
+dataset folder is not a replacement for either archive input.
+
+options:
+  -h, --help         show this help message and exit
+  --preproc PREPROC
+  --source SOURCE
+  --output OUTPUT
+
+exit_code=0
+
+$ C:\Users\ASUS\AppData\Local\Programs\Python\Python312\python.exe scripts/audit_archive.py --help
+usage: audit_archive.py [-h] --output OUTPUT [archive]
+
+Optional read-only audit of the original preprocessing ZIP, not a dataset
+folder. Never executes notebook cells. Not required for loading or checking
+the prepared data/horse2zebra dataset; the original archive must be available
+to run this audit.
+
+positional arguments:
+  archive
+
+options:
+  -h, --help       show this help message and exit
+  --output OUTPUT
+
+exit_code=0
+
+
+Additional read-only assertions: dataset/manifest/metadata/preparation report, model/pipeline/tests and historical evidence hashes unchanged. Metadata CSV parsed; all final source paths covered.
+README loading example ran while zipfile.ZipFile was blocked: PASS
+torch.Size([1, 3, 256, 256]) torch.Size([1, 3, 256, 256]) torch.Size([1, 3, 256, 256]) torch.Size([1, 3, 256, 256])
+exit_code=0
