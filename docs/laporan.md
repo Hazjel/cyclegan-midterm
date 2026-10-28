@@ -1,109 +1,145 @@
-# Laporan proyek: Vibe Coding Generative AI from Scratch
+# Laporan Proyek Kelompok: CycleGAN Kuda ↔ Zebra
 
-**Status dokumen:** draf berbasis bukti fondasi model dan pipeline orang 2, sesi 27 Oktober 2026. Proyek keseluruhan belum selesai; training dan evaluasi kualitas model belum dilakukan.
+Tema tugas: **Vibe Coding Generative AI from Scratch**.
 
-## 1. Identitas
+**Status:** draf laporan akademik. Rancangan, implementasi fondasi model dan pipeline data tersedia. Pelatihan, tuning, dan evaluasi kualitas belum dilakukan. Hasil pengujian teknis yang disajikan berasal dari bukti 27 Oktober 2026; penyuntingan dokumentasi dilakukan 28 Oktober 2026.
 
-Nama kelompok: [BELUM DIBERIKAN]. Kelas: [BELUM DIBERIKAN]. Dosen: [BELUM DIBERIKAN].
-Nama/NIM dan pemetaan anggota: [BELUM DIBERIKAN].
+## 1. Identitas dan kontribusi kelompok
 
-Pembagian yang diminta pengguna: Peran 1 dan 4 ditangani pengguna, orang 2 menangani data, orang 3 menangani training. Pembagian tersebut tidak menjadi bukti kontribusi selesai dari anggota lain.
-
-## 2. Tujuan dan ruang lingkup
-
-Proyek bertujuan menerjemahkan gambar kuda dan zebra dua arah menggunakan CycleGAN tanpa dataset berpasangan. Implementasi mencakup arsitektur empat model, konfigurasi bersama, kontrak tensor, pipeline data dan dokumentasi. Pemeriksaan menggunakan tensor dummy serta batch data asli. PyTorch digunakan untuk layer dasar serta autograd, tanpa pretrained weights atau arsitektur siap pakai.
-
-Panduan lokal halaman 1 melarang penyalinan implementasi lengkap dari tutorial/GitHub dan membolehkan dokumentasi resmi fungsi dasar. Halaman 2 memuat pembagian peran, halaman 3 mencantumkan CycleGAN, halaman 5 meminta log dan bukti fungsionalitas/pelatihan. Dokumen sumber dan hash-nya tercatat di [lingkungan](bukti/lingkungan.json).
-
-## 3. Metode Vibe Coding dan orisinalitas
-
-Pengguna memberikan prompt tugas terperinci yang menetapkan batas kontribusi, tahapan audit, arsitektur, pemeriksaan dan kejujuran bukti. [Prompt tersedia](bukti/prompt_pengguna.md) dan kronologi dirangkum dalam [log sesi](log_interaksi.md).
-
-AI membaca berkas, memeriksa API dasar melalui Context7, menulis komposisi layer sendiri, menjalankan pemeriksaan lalu menyusun handoff. Tidak mengambil implementasi CycleGAN lengkap dari tutorial atau GitHub. Ini uraian proses sesi, bukan audit plagiarisme menyeluruh terhadap seluruh sumber eksternal. Penguasaan materi/refleksi anggota: [BELUM DIBERIKAN KELOMPOK]. Ekspor chat lengkap/share link: [BELUM DILAMPIRKAN].
-
-## 4. Dataset dan hasil audit
-
-**Pembaruan penggunaan, 27 Oktober 2026:** pengguna menyatakan telah menghapus `preproc.zip`; pemeriksaan workspace mengonfirmasi arsip tidak tersedia. Root runtime aktif `data/horse2zebra` langsung dibaca oleh pipeline dan pemeriksaan data. Deskripsi ZIP, hash dan audit berikut tetap merupakan provenance sesi sebelumnya. Dataset, manifest, transformasi dan split final dipertahankan. Bukti verifikasi sesudah penghapusan disimpan terpisah pada [pemeriksaan dataset final tanpa ZIP](bukti/pemeriksaan_dataset_final_tanpa_zip.json). Tanpa arsip preprocessing asli, pembandingan ulang dan persiapan dari pasangan ZIP tidak dapat direproduksi sepenuhnya; hal ini tidak menghalangi loading atau training orang 3 nantinya. Training belum dijalankan pada sesi penyesuaian ini.
-
-Sumber arsip lokal: `preproc.zip`, SHA-256 `1dd5f0529247324f986cbceeaf260bb6712ef24013d9527dba57b85d0def3805`. Pada sesi orang 2, [dataset Kaggle Balraj Ashwath](https://www.kaggle.com/datasets/balraj98/horse2zebra-dataset) versi 1 diunduh dan dibandingkan byte demi byte terhadap seluruh 2.661 gambar asli. ZIP Kaggle SHA-256 `0655d8feb8eb83911ac08c1d230a0464794418c107412a28adc47e1eb69e90a0`; CLI mem-pin hash ini. Metadata sumber ada pada [kaggle_metadata.json](bukti/kaggle_metadata.json). Lisensi API: `Other (specified in description)`; deskripsi mengakui sumber UC Berkeley dan meminta sitasi CycleGAN (Zhu et al., ICCV 2017).
-
-Arsip berisi data asli 2.661 gambar, cleaned 2.633, review 28, notebook dan dua CSV. Cleaned terdiri dari trainA=1.049, trainB=1.327, testA=118, testB=139. Semua cleaned dapat didekode, 256×256, dengan 2.626 RGB dan tujuh grayscale trainB. Seluruh cleaned adalah salinan byte identik dari gambar aslinya; dua folder itu tidak digabung sebagai sampel berbeda.
-
-Metadata awal 2.661 baris memiliki 240 path yang salah lokasi: 120 testB→testA dan 120 trainA→trainB. Kesalahan yang sama ditemukan pada CSV Kaggle. Pipeline memperbaiki path, domain dan split pada salinan metadata, dengan pencocokan satu-ke-satu dan cek silang image_id/prefix nama. Sebanyak 25 salinan duplikat dikecualikan menggunakan hash piksel RGB, termasuk trainA/n02381460_3811.jpg yang identik dengan testA/n02381460_1160.jpg; test diprioritaskan.
-
-Notebook hanya mengaudit blur dan menyalin gambar berdasarkan threshold 100. Tampilan RGB pada plot tidak mengonversi berkas dataset. CSV blur cocok dengan partisi ZIP. Audit tidak menilai kelayakan semantik seluruh gambar dan tidak mendeteksi seluruh duplikasi visual dengan encoding berbeda.
-
-Bukti awal: [audit JSON](bukti/audit_dataset.json). Pipeline orang 2 kini menyimpan 2.608 PNG RGB 256 x 256 pada data/horse2zebra: trainA=1.040, trainB=1.311, testA=118, testB=139. Ketujuh grayscale dipertahankan dengan tiga kanal identik. Seluruh 28 gambar skor blur <100 tetap dikecualikan; penghitungan ulang seluruh skor menggunakan OpenCV terpasang menghasilkan nol mismatch. Metadata terkoreksi, manifest dan audit pengecualian tersimpan pada [status orang 2](status_orang2.md).
-
-Train memakai bicubic resize 286, random crop 256, flip horizontal 0,5 dan normalisasi RGB float32 CHW [-1,1]. Test deterministik dan dimuat terpisah per domain. Domain train lebih besar dikunjungi sekali per epoch, domain kecil disampling acak dengan pengembalian. Test yang digunakan merupakan subset cleaned, bukan keseluruhan benchmark Kaggle; validasi untuk tuning harus diambil orang 3 dari train.
-
-## 5. Perancangan arsitektur oleh Peran 1
-
-A=kuda, B=zebra, G_AB=kuda→zebra, G_BA=zebra→kuda, D_A=domain kuda, D_B=domain zebra. Satu kelas Generator dan satu kelas PatchDiscriminator dipakai untuk membuat dua instance masing-masing dengan parameter terpisah.
-
-Generator: conv 7×7 dengan reflection padding; dua downsampling 3×3 stride 2; sembilan residual block (dua conv 3×3, InstanceNorm dan ReLU di cabang residual); dua transposed convolution 3×3 stride 2; conv 7×7 dan Tanh. Kanal 3→64→128→256→128→64→3. Residual addition mempertahankan jalur fitur identitas; Tanh menyelaraskan rentang output dan normalisasi input [-1,1].
-
-Discriminator: lima conv 4×4 padding 1, stride 2/2/2/1/1, kanal 3→64→128→256→512→1; LeakyReLU 0,2 dan InstanceNorm di lapisan tengah. Output 256×256 menjadi peta skor mentah 30×30 tanpa sigmoid, dengan receptive field konvolusional nominal 70×70. InstanceNorm menambahkan ketergantungan statistik spasial, sehingga angka 70 tidak berarti independensi spasial penuh.
-
-InstanceNorm memakai affine=False, track_running_stats=False, eps=1e-5. Tidak bergantung pada statistik batch atau running statistics. Semua convolution diinisialisasi normal(0,0.02), bias nol. Tidak ada dropout atau bobot pretrained. Jumlah parameter per G=11.378.179 dan per D=2.764.737. Konfigurasi immutable dapat diekspor lewat `asdict` dan diberi versi arsitektur untuk restore.
-
-Kapasitas filter/block, normalisasi, skema inisialisasi, dan upsampling adalah baseline rancangan AI; belum dinyatakan optimal. Hardware terdeteksi RTX 3060 Laptop 6 GiB, tetapi belum ada bukti penggunaan memori training. Tidak memberikan estimasi durasi atau klaim kualitas hasil.
-
-## 6. Kontrak dan manajemen integrasi
-
-Batch yang diminta adalah dictionary `A` dan `B`: tensor RGB float32 `[N,3,256,256]`, finite, [-1,1]. Pipeline menyuplai CPU tensor unpaired; training memindahkan model dan batch ke device yang sama. Model menolak dtype, rentang, kanal, dan ukuran yang tidak memenuhi kontrak.
-
-Orang 3 mengimpor `ArchitectureConfig`, `Generator`, `PatchDiscriminator` dari `cyclegan`, membuat empat instance, serta menyimpan konfigurasi aktual dan empat state_dict. Pemilihan adversarial loss harus sesuai skor mentah; BCEWithLogitsLoss tidak diberi sigmoid tambahan. Seluruh rincian berada di [kontrak integrasi](kontrak_integrasi.md).
-
-Handoff tertulis adalah bukti koordinasi yang tersedia. Riwayat Git, diskusi persetujuan anggota dan penguasaan individual: [BELUM DIBERIKAN].
-
-## 7. Pemeriksaan fondasi dan penanganan masalah
-
-Pemeriksaan memakai Python 3.12.3, PyTorch 2.5.1+cu121, Pillow 12.3.0; semua tes model di CPU, seed 7 dan empat thread. Hasil terbaru: **21 tes lulus**, tujuh model, tiga audit dan sebelas data, termasuk worker Windows. [Log terbaru](bukti/tes_orang2.txt) dan [pemeriksaan data asli](bukti/pemeriksaan_data.json) mencakup seluruh berkas, satu epoch tiap loader, dan forward batch nyata pada empat model default. Tidak menjalankan training loop. Pemeriksaan fondasi awal tetap tersimpan pada [log sebelumnya](bukti/pemeriksaan.txt).
-
-| Yang diperiksa | Bukti hasil |
+| Identitas | Isian |
 |---|---|
-| Import API publik | berhasil, konfigurasi tercetak |
-| Dua G pada 256×256 | `[1,3,256,256]`, finite, output di [-1,1] |
-| Dua D pada 256×256 | `[1,1,30,30]`, finite |
-| Backward keempat model | gradient input dan semua parameter yang diperiksa tersedia dan finite; gradient tidak seluruhnya nol |
-| Independensi instance | identitas parameter/storage tidak bertumpang tindih, mutasi model pertama tidak mengubah pasangan |
-| Ukuran tambahan dan eval | batch dua gambar 32×40 diterima, shape sesuai |
-| Validasi | input dan konfigurasi tidak valid ditolak |
-| Restore model | round-trip konfigurasi/state_dict dalam memori mempertahankan output |
-| Audit | ZIP fixture tidak berubah, notebook tidak dijalankan, metadata salah/gambar rusak/duplikasi lintas split terlaporkan |
+| Mata kuliah | [NAMA MATA KULIAH] |
+| Program studi / institusi | [PROGRAM STUDI DAN INSTITUSI] |
+| Kelas / kelompok | [KELAS] / [NAMA ATAU NOMOR KELOMPOK] |
+| Dosen pengampu | [NAMA DOSEN] |
+| Anggota | [NAMA DAN NIM SETIAP ANGGOTA] |
 
-Kegagalan awal test-first berupa modul yang belum dibuat dan peringatan parser PDF dicatat di log; tidak ada eror training yang diklaim. Penolakan input invalid pada tes bukan kegagalan penggunaan nyata. Pemeriksaan ini membuktikan fondasi shape/numerik/API, **bukan kualitas penerjemahan, kestabilan adversarial training, atau kecukupan memori training**.
+Pembagian awal terdiri atas Peran 1 (Prompt Engineer & LLM Navigator), Peran 2 (Data Pipeline & Preprocessing Engineer), Peran 3 (Training Loop & Hyperparameter Tuning Engineer), dan Peran 4 (Lead Documentarian & Error Handler).
 
-## 8. Implementasi pelatihan
+Kontribusi aktual yang diklarifikasi: pelaksana Peran 1 dan 4 juga mengambil alih pengerjaan teknis Peran 2 dengan bantuan LLM. Nama/NIM pelaksana: [BELUM DIISI]. Penanggung jawab awal Peran 2 dan penanggung jawab Peran 3: [BELUM DIISI]. Implementasi training Peran 3 belum tersedia. Sebutan “orang 2” dalam nama berkas dan arsip menunjukkan lingkup tugas, bukan identitas pembuat implementasi. Kontribusi anggota lain, pembagian waktu, persetujuan kelompok, dan refleksi pribadi yang belum diberikan tidak diasumsikan.
 
-[PERLU DILENGKAPI ORANG 3]
+## 2. Pendahuluan dan tujuan
 
-Isi yang diperlukan: loss adversarial/cycle/identity beserta rumus/bobot, optimizer, learning rate/scheduler, epoch/batch size, seed, strategi pembaruan G/D, replay buffer jika dipakai, konfigurasi arsitektur/data aktual dan perangkat yang digunakan. Jangan mengisi angka rancangan sebagai hasil eksperimen yang telah dilakukan.
+Proyek ini merupakan tugas kelompok untuk membangun model generatif dari layer dasar melalui metode vibe coding. Permasalahan yang dipilih adalah penerjemahan gambar kuda menjadi zebra dan sebaliknya tanpa pasangan gambar satu-ke-satu.
 
-## 9. Eksperimen, tuning, metrik dan grafik
+Tujuan teknisnya adalah merancang empat model CycleGAN, menyediakan pipeline data yang konsisten, menguji integrasi, dan kemudian melatih serta mengevaluasi penerjemahan gambar. Ruang lingkup yang telah diimplementasikan mencakup fondasi arsitektur, konfigurasi bersama, pipeline, kontrak integrasi dan dokumentasi. Keberhasilan penerjemahan belum dapat disimpulkan sebelum pelatihan dan evaluasi.
 
-[PERLU DILENGKAPI ORANG 3]
+## 3. Metode pengembangan dengan LLM
 
-Lampirkan konfigurasi setiap run, alasan perubahan, log loss nyata dan grafik, protokol evaluasi, sumber bobot model metrik jika ada, hasil numerik yang terukur serta batas interpretasinya. Jika memakai metrik berbasis jaringan pretrained, bedakan model metrik tersebut dari model CycleGAN yang harus dilatih dari nol dan cocokkan dengan aturan dosen. Belum ada metrik atau grafik hasil dalam sesi ini.
+Panduan tugas mengharuskan kolaborasi dengan LLM, pencatatan prompt/respons dan debugging, serta melarang penyalinan implementasi lengkap dari tutorial/GitHub. Dokumentasi resmi diperbolehkan sebagai referensi fungsi dasar. Identitas dan hash panduan tercatat dalam [inventaris](bukti/lingkungan.json).
 
-## 10. Hasil penerjemahan dan checkpoint
+Proses yang tercatat meliputi perumusan kebutuhan dan batas peran melalui prompt, pemeriksaan berkas, perancangan antarmuka, penyusunan kode dengan bantuan LLM, pengujian, serta penanganan masalah. API dasar diperiksa melalui Context7. Model menggunakan layer PyTorch dan autograd tanpa pretrained weights. Uraian proses ini bukan audit orisinalitas menyeluruh terhadap semua sumber eksternal.
 
-[PERLU DILENGKAPI ORANG 3]
+[Log interaksi](log_interaksi.md), [prompt tugas awal](bukti/prompt_pengguna.md), [prompt tahap pipeline](bukti/prompt_orang2.md), dan [diskusi teknis Claude](diskusi_claude.md) mempertahankan bukti proses. Review AI tidak diperlakukan sebagai persetujuan dosen atau kontribusi anggota manusia. Ekspor chat lengkap/share link dan penjelasan penguasaan materi masing-masing anggota: [PERLU DILENGKAPI KELOMPOK].
 
-Tambahkan contoh kuda→zebra dan zebra→kuda dari test yang telah diperbaiki, rekonstruksi cycle, analisis kegagalan pada sampel nyata, path/identitas checkpoint, uji restore/resume serta konfigurasi yang disimpan. Tidak menggunakan output tensor acak sebagai contoh hasil training.
+## 4. Dataset dan provenance
 
-## 11. Pembahasan, keterbatasan dan refleksi
+Dataset aktif ditempatkan pada `data/horse2zebra` dan dibagikan terpisah dari Git. Paket final memuat trainA/trainB/testA/testB, manifest, metadata terkoreksi dan preparation report. Lokasi distribusi paket final: [BELUM DIBERIKAN].
 
-Fondasi dan pipeline terhubung melalui kontrak v1.1 dan tes CPU. Grayscale, kesalahan metadata dan duplikasi identik yang diketahui telah ditangani. Deduplikasi belum menjamin bebas gambar mirip dengan encoding/crop berbeda. Konfigurasi awal belum dituning dan kemampuan training pada GPU terdeteksi belum diukur.
+| Split | Domain | Jumlah akhir |
+|---|---|---:|
+| trainA | kuda | 1.040 |
+| trainB | zebra | 1.311 |
+| testA | kuda | 118 |
+| testB | zebra | 139 |
+| Total | | 2.608 |
 
-Pembahasan hasil training: [PERLU DILENGKAPI ORANG 3].
-Pelajaran, pembagian kontribusi aktual, keputusan bersama dan analisis pribadi: [BELUM DIBERIKAN KELOMPOK].
+Seluruh gambar akhir berupa PNG RGB 256 × 256. Manifest SHA-256 adalah `fe9d4e3a940fb9167fead81b21123ed4b12e09487e3a336a695f7d0681e38f2f`; manifest memuat sampel runtime, sedangkan metadata terkoreksi mencatat seluruh 2.661 gambar sumber.
 
-## 12. Kesimpulan sementara dan lampiran
+Sumber yang diarsipkan adalah [Kaggle Balraj Ashwath](https://www.kaggle.com/datasets/balraj98/horse2zebra-dataset), versi 1. [Metadata sumber](bukti/kaggle_metadata.json) mengakui sumber UC Berkeley dan meminta sitasi CycleGAN (Zhu et al., ICCV 2017). Lisensi API tercatat sebagai `Other (specified in description)`, tanpa klaim lisensi lebih spesifik.
 
-Fondasi arsitektur, pipeline orang 2 dan dokumentasi telah dibuat serta diperiksa. Review read-only Claude Opus 5.5 High tercatat pada [diskusi Claude](diskusi_claude.md). Kesimpulan tentang keberhasilan CycleGAN menerjemahkan gambar: [PERLU DILENGKAPI ORANG 3].
+Riwayat persiapan menggunakan `preproc.zip`, SHA-256 `1dd5f0529247324f986cbceeaf260bb6712ef24013d9527dba57b85d0def3805`, serta ZIP Kaggle, SHA-256 `0655d8feb8eb83911ac08c1d230a0464794418c107412a28adc47e1eb69e90a0`. Pada tahap tersebut, seluruh 2.661 gambar asli dibandingkan byte demi byte. Kandidat cleaned berjumlah 2.633; 28 gambar blur sudah dipisahkan. Persiapan final memperbaiki 240 baris metadata, mereplikasi kanal tujuh grayscale menjadi RGB, dan mengecualikan 25 salinan piksel identik dengan prioritas mempertahankan test.
 
-Lampiran yang tersedia: prompt tugas, log sesi, kontrak, kode model/pipeline, tes, audit, metadata sumber Kaggle, manifest/metadata final dan keluaran pemeriksaan. Lampiran belum tersedia: identitas kelompok, ekspor lengkap chat/share link, bukti kontribusi manusia, log training, grafik, metrik, checkpoint dan hasil gambar.
+Notebook awal hanya memeriksa blur dan menyalin gambar menurut threshold 100. Konversi RGB untuk tampilan plot belum mengubah berkas saat itu. Pemeriksaan ulang 2.661 skor blur tercatat tanpa mismatch. [Audit awal](bukti/audit_dataset.json), [preparation report](bukti/preparation_report.json), dan [pemeriksaan blur](bukti/verifikasi_blur.json) dipertahankan sebagai bukti historis.
 
-Referensi API dasar resmi dan panduan lokal tercantum di README. Daftar pustaka ilmiah dan format sitasi yang diwajibkan kelas: [BELUM DILENGKAPI KELOMPOK].
+Penghapusan `preproc.zip` dilaporkan pelaksana proyek dan dikonfirmasi pada sesi 27 Oktober 2026. Loader kini membaca folder final tanpa ZIP. Penghapusan ini tidak mengubah riwayat bahwa dataset dibuat dari arsip, tetapi membatasi reproduksi ulang audit preprocessing sumber.
+
+## 5. Rancangan sistem
+
+### 5.1 Arsitektur model
+
+Domain A=kuda dan B=zebra. G_AB menerjemahkan A→B, G_BA menerjemahkan B→A, sedangkan D_A/D_B menilai real/fake di domain masing-masing. Satu kelas generator dan satu kelas discriminator digunakan untuk membuat dua instance independen masing-masing.
+
+| Komponen | Rancangan baseline dan alasan |
+|---|---|
+| Generator | Conv 7×7, dua downsampling Conv 3×3 stride 2, sembilan residual block, dua ConvTranspose 3×3 stride 2, Conv 7×7 dan Tanh |
+| Kanal generator | 3→64→128→256→128→64→3; jumlah fitur bertambah saat resolusi berkurang |
+| Residual block | Dua Conv 3×3 dengan InstanceNorm, ReLU setelah conv pertama, dan penjumlahan x+F(x) untuk menjaga jalur identitas fitur |
+| Padding / upsampling | Reflection padding pada conv 7×7 dan residual; ConvTranspose memakai padding 1 dan output_padding 1 agar shape kembali tepat untuk H/W kelipatan empat |
+| Normalisasi | InstanceNorm non-affine, tanpa running stats, eps=1e-5; statistik per gambar mendukung batch satu |
+| Discriminator | Lima Conv 4×4 padding 1, stride 2/2/2/1/1, kanal 3→64→128→256→512→1; LeakyReLU 0,2 dan InstanceNorm di lapisan tengah |
+| Output | Tanh generator menghasilkan [-1,1]; discriminator menghasilkan skor mentah 30×30 tanpa sigmoid untuk input 256×256 |
+| Inisialisasi | Convolution memakai normal(0,0.02), bias nol; tidak menggunakan dropout atau bobot pretrained |
+
+Receptive field konvolusional nominal discriminator adalah 70×70. InstanceNorm menggunakan statistik spasial sehingga nominal tersebut bukan klaim independensi spasial penuh. Jumlah parameter per generator=11.378.179 dan per discriminator=2.764.737.
+
+Filter, jumlah block, normalisasi, inisialisasi, dan upsampling adalah baseline yang belum dituning. Inventaris historis mencatat RTX 3060 Laptop 6 GiB; kebutuhan memori training empat model belum diukur. Tidak ada estimasi durasi training atau klaim kualitas berdasarkan inventaris tersebut.
+
+### 5.2 Rancangan data dan integrasi
+
+Batch train berupa dictionary A/B, masing-masing RGB float32 `[N,3,256,256]`, finite, dalam [-1,1]. Dataset unpaired tidak mengharuskan A[i] dan B[i] menggambarkan objek yang sama. TestA/testB dimuat terpisah secara deterministik.
+
+Konfigurasi arsitektur diberi versi dan disimpan bersama empat state_dict agar rekonstruksi model tidak hanya mengandalkan kesamaan shape parameter. Aturan output discriminator, loss yang kompatibel, dan payload checkpoint dijelaskan dalam [kontrak integrasi](kontrak_integrasi.md). Desain checkpoint ini belum merupakan implementasi resume training.
+
+## 6. Implementasi yang tersedia
+
+`cyclegan/models.py` mengimplementasikan residual block, Generator dan PatchDiscriminator. `cyclegan/config.py` menyediakan dataclass immutable dan validasi konfigurasi. Setiap konstruktor mengalokasikan parameter baru; forward memvalidasi shape, dtype, rentang dan finite tanpa transformasi tersembunyi.
+
+`cyclegan/data.py` membaca folder final berdasarkan manifest. Augmentasi train berlangsung saat loading: resize bicubic 286, crop acak 256, flip horizontal 0,5, kemudian normalisasi `2*(pixel/255)-1`. Transform domain independen. Panjang epoch=max(trainA,trainB)=1.311; domain besar dikunjungi sekali dan domain kecil disampling acak dengan pengembalian. Test tidak memakai transformasi acak. Tidak ada gambar augmentasi offline baru.
+
+`scripts/check_data.py` memeriksa dataset final, mengiterasi loader dan menjalankan forward batch nyata pada empat model. `prepare_data.py` dan `audit_archive.py` dipertahankan sebagai utilitas ZIP opsional. Panduan instalasi, penempatan dataset dan penggunaan terdapat dalam [README](../README.md). Status teknis pipeline dirangkum dalam [dokumen Peran 2](status_orang2.md).
+
+Loss CycleGAN, optimizer, training loop, checkpoint pelatihan dan tuning **belum diimplementasikan**. Tanggung jawab tersebut tetap berada pada Peran 3.
+
+## 7. Pengujian teknis dan hasil aktual
+
+Bukti pengujian 27 Oktober 2026 menggunakan Python 3.12.3, PyTorch 2.5.1+cu121, dan Pillow 12.3.0. Tes model memakai CPU, empat thread dan seed 7. Hasil tersimpan: **21 tes lulus** (tujuh model, tiga audit, sebelas data). Sesi penyuntingan 28 Oktober 2026 memeriksa dokumentasi tanpa mengulang suite model atau training.
+
+| Pemeriksaan | Hasil yang tercatat |
+|---|---|
+| Import, shape dan rentang generator | Dua G menerima 256×256, output [1,3,256,256], finite dan dalam [-1,1] |
+| Discriminator | Dua D menghasilkan [1,1,30,30], finite |
+| Backward dummy | Gradient input dan parameter tersedia dan finite; tidak seluruhnya nol |
+| Independensi instance | Parameter/storage terpisah; mutasi satu instance tidak mengubah pasangan |
+| Konfigurasi / state_dict | Round-trip dalam memori mempertahankan output |
+| Validasi dan pipeline | Input invalid, gambar rusak, metadata ambigu, traversal dan konflik domain terdeteksi; worker Windows diperiksa |
+| Dataset nyata | Seluruh 2.608 gambar RGB 256×256 cocok dengan hash manifest, tanpa hash piksel identik yang tersisa |
+| Epoch loader | Train=1.311 pasangan/328 batch; testA=118/30 batch; testB=139/35 batch pada batch size 4 |
+| Batch nyata → model | Kedua generator dan discriminator default menerima batch nyata di CPU, output finite |
+
+Panjang epoch train tidak menjamin semua sampel domain kecil terpilih pada epoch yang sama karena sampling dilakukan dengan pengembalian. Pemeriksaan hash piksel adalah pemeriksaan baca-saja, bukan persiapan ulang dataset.
+
+Bukti: [log tes](bukti/tes_dataset_final_tanpa_zip.txt), [pemeriksaan data/model](bukti/pemeriksaan_dataset_final_tanpa_zip.json), [preservasi dataset](bukti/preservasi_dataset_final_tanpa_zip.json), dan [pemeriksaan fondasi awal](bukti/pemeriksaan.txt). Riwayat kegagalan awal dan perbaikannya tetap tersedia dalam log interaksi. Hasil teknis ini belum membuktikan kualitas penerjemahan, kestabilan training adversarial, atau kecukupan memori training.
+
+## 8. Rencana dan hasil eksperimen pelatihan
+
+**Belum dilakukan — [PERLU DILENGKAPI PERAN 3].**
+
+Bagian ini perlu memuat formulasi dan bobot loss adversarial/cycle/identity, optimizer, learning rate/scheduler, jumlah epoch, batch size, seed, urutan pembaruan G/D, konfigurasi data/model aktual, perangkat serta pemakaian memori. Setiap eksperimen harus mempunyai konfigurasi, alasan perubahan dan log yang dapat ditelusuri.
+
+Hasil yang belum tersedia: grafik loss, metrik beserta protokol evaluasi, perbandingan tuning, checkpoint/resume, contoh penerjemahan dua arah dan rekonstruksi cycle, serta analisis kegagalan pada gambar nyata. Tensor dummy tidak dipakai sebagai contoh hasil training. Jika metrik kelak menggunakan jaringan pretrained, bedakan jaringan metrik dari model CycleGAN yang dilatih dari nol dan cocokkan penggunaannya dengan aturan tugas.
+
+Peran 3 perlu mengambil validasi dari train sebelum tuning/pemilihan checkpoint. Test digunakan untuk evaluasi akhir, bukan keputusan hyperparameter. Belum ada keputusan split validasi yang dilaporkan.
+
+## 9. Pembahasan dan keterbatasan
+
+Fondasi model dan pipeline dapat diintegrasikan melalui kontrak v1.1 dan memiliki bukti pengujian CPU. Masalah grayscale, metadata salah dan duplikasi piksel identik yang diketahui telah ditangani pada tahap persiapan.
+
+Evaluasi kelak berlaku untuk subset test yang telah disaring, bukan benchmark Kaggle penuh. Hash piksel belum mendeteksi semua kemiripan atau crop berbeda. Kapasitas training belum diukur, konfigurasi belum dituning, dan kualitas hasil belum dapat dinilai. Arsip preprocessing yang dihapus membatasi reproduksi penuh tahap sumber meskipun folder final tetap dapat diperiksa.
+
+Pembahasan eksperimen: [PERLU DILENGKAPI PERAN 3]. Refleksi pribadi, penguasaan materi, catatan kontribusi manusia terperinci, dan keputusan bersama: [PERLU DILENGKAPI KELOMPOK]. Keberadaan repository Git tidak dengan sendirinya membuktikan atribusi kontribusi individual; tidak ada commit baru dibuat sebagai bagian penyuntingan ini.
+
+## 10. Kesimpulan sementara dan kelengkapan laporan
+
+Rancangan dan implementasi fondasi CycleGAN serta pipeline data telah tersedia dan didukung bukti pengujian teknis. Keberhasilan penerjemahan gambar belum dapat disimpulkan karena pelatihan dan evaluasi kualitas belum dilakukan.
+
+Lampiran tersedia: prompt, log interaksi, respons review AI, kode, tes, audit, metadata sumber, manifest/preparation report dan hasil pemeriksaan. Informasi yang belum tersedia: identitas akademik/anggota, lokasi distribusi dataset final, ekspor percakapan lengkap/share link, bukti kontribusi manusia terperinci, refleksi kelompok dan seluruh hasil eksperimen Peran 3.
+
+## 11. Referensi dan lampiran
+
+1. *[CAK4KBB3 2026-1] Panduan Proyek 1 — Vibe Coding*, dokumen tugas lokal; identitas/hash pada [inventaris](bukti/lingkungan.json).
+2. [Horse2zebra Dataset, Balraj Ashwath](https://www.kaggle.com/datasets/balraj98/horse2zebra-dataset), metadata versi 1 tersimpan pada [arsip sumber](bukti/kaggle_metadata.json). Metadata mengacu pada Zhu, Park, Isola, Efros, *Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks*, ICCV 2017.
+3. Referensi fungsi dasar: [PyTorch](https://docs.pytorch.org/docs/stable/index.html) dan [Pillow](https://pillow.readthedocs.io/en/stable/). Penelusuran API melalui Context7 dicatat dalam log.
+4. [Kontrak integrasi](kontrak_integrasi.md), [status pipeline](status_orang2.md), [log interaksi](log_interaksi.md), dan [diskusi LLM](diskusi_claude.md).
+
+Format sitasi dan kelengkapan daftar pustaka sesuai ketentuan mata kuliah: [PERLU DILENGKAPI KELOMPOK].

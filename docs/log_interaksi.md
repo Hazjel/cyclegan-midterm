@@ -2,10 +2,12 @@
 
 Kelompok: [BELUM DIBERIKAN]. Identitas/NIM: [BELUM DIBERIKAN].
 Tanggal sesi: **27 Oktober 2026, Asia/Jakarta**, berdasarkan konteks sesi dan timestamp bukti pemeriksaan. Tidak ada tanggal sesi sebelumnya yang diasumsikan.
-Target: fondasi model dan dokumentasi untuk pengguna sebagai Peran 1 dan 4.
+Target sesi awal: fondasi model dan dokumentasi dalam lingkup Peran 1 dan 4.
 Tautan share chat: [BELUM DIBERIKAN]. Ekspor percakapan lengkap: [BELUM DILAMPIRKAN].
 
-Catatan ini merangkum satu sesi nyata yang tersedia. Bukan transkrip verbatim seluruh pesan/tools, bukan bukti bahwa orang 2/3 telah mengerjakan tahap berikutnya. [Prompt tugas lengkap](bukti/prompt_pengguna.md) disalin dari permintaan pengguna pada sesi ini. Semua komentar analitis di bawah merupakan hasil bantuan AI dan masih perlu ditinjau/dipahami kelompok; analisis pribadi kelompok belum diberikan.
+Dokumen ini mempertahankan kronologi pengembangan proyek kelompok. Bagian 1–6 mencatat sesi fondasi awal; bagian 7 mencatat implementasi lingkup Peran 2, dan bagian 8 penyesuaian penggunaan dataset final. Status pada setiap bagian berlaku untuk tahap yang dicatat, bukan selalu status terkini. [Prompt tugas awal](bukti/prompt_pengguna.md), kutipan, traceback, respons asli dan keluaran pemeriksaan dipertahankan. Log naratif ini bukan ekspor seluruh percakapan; analisis pribadi kelompok dan ekspor lengkap masih perlu dilengkapi.
+
+Klarifikasi kontribusi pada 28 Oktober 2026: pelaksana Peran 1 dan 4 menyatakan juga mengambil alih pengerjaan teknis Peran 2. Sebutan “orang 2” pada log/bukti lama menunjukkan lingkup tugas, bukan atribusi implementasi kepada anggota yang semula ditugaskan. Nama/NIM dan catatan kontribusi manusia terperinci [BELUM DIISI]. Arsip `docs/superpowers/plans` dan respons asli pada `docs/bukti` serta `docs/diskusi_claude.md` dipertahankan sebagai bukti proses, bukan narasi status terbaru.
 
 ## 1. Inisiasi dan batas pekerjaan
 
@@ -17,7 +19,7 @@ Prompt pengguna, cuplikan verbatim:
 
 > Jangan membuat implementasi pipeline data dan training loop milik anggota lain. Siapkan antarmuka dan instruksi integrasinya.
 
-Alasan pendekatan: fondasi harus dapat diuji tanpa menunggu pipeline atau training orang lain. Dua kelas model cukup untuk membuat empat instance, dengan satu dataclass immutable yang dapat direkam bersama checkpoint. Pengguna telah meminta eksekusi langsung sampai bagian ini selesai; sesi tidak dihentikan pada proposal.
+Alasan pendekatan: fondasi perlu diuji tanpa bergantung pada pipeline atau training yang belum tersedia saat itu. Dua kelas model cukup untuk membuat empat instance, dengan satu dataclass immutable yang dapat direkam bersama checkpoint. Target tahap awal adalah implementasi dan verifikasi, bukan hanya proposal.
 
 Ringkasan respons AI: membaca workspace dan skill kerja relevan, panduan PDF, inventaris ZIP, notebook sebagai JSON, serta CSV. Workspace awal berisi `preproc.zip` dan berkas PNG/JPG di `tmp/`; tidak ditemukan codebase model atau test yang dapat dipakai ulang. Notebook berisi kode audit blur dan salin gambar; kode tersebut dipakai sebagai bukti penjelasan data, tidak dijalankan atau disalin menjadi pipeline baru.
 
@@ -34,7 +36,7 @@ Alasan: klaim awal dataset belum boleh menjadi asumsi implementasi. Audit membac
 Ringkasan hasil:
 
 - Panduan lima halaman: melarang penyalinan blok implementasi lengkap dari tutorial, mengizinkan dokumentasi resmi untuk fungsi dasar, mencantumkan CycleGAN, meminta bukti chat, debugging dan integrasi.
-- Seluruh jumlah split cleaned sesuai prompt: 1.049/1.327/118/139. Seluruhnya 256×256 dan dapat didekode. Tujuh mode L di trainB belum dikonversi; konversi menjadi pekerjaan orang 2.
+- Seluruh jumlah split cleaned sesuai prompt: 1.049/1.327/118/139. Seluruhnya 256×256 dan dapat didekode. Tujuh mode L di trainB belum dikonversi pada tahap awal; penanganannya masuk lingkup Peran 2.
 - 2.633 cleaned identik byte terhadap salinan asal; cleaned dan asli bukan dua kumpulan sampel independen.
 - 240 path metadata salah lokasi relatif terhadap `data/`: 120 testB→testA dan 120 trainA→trainB ditemukan berdasarkan nama berkas. Tidak otomatis mengoreksi label/path.
 - Tambahan temuan nyata: 25 kelompok duplikasi byte di cleaned, satu lintas trainA/testA. Path lengkap tersedia di [audit](bukti/audit_dataset.json). Jangan menafsirkan jumlah berkas sebagai jumlah gambar unik setelah deduplikasi.
@@ -53,13 +55,13 @@ Penelusuran nyata: resolve PyTorch → `/pytorch/pytorch`, lalu query terpisah m
 
 Sebagian hasil indeks PyTorch menunjuk main/2.14; hasil retrieval bukan bukti bahwa paket lokal mempunyai versi itu. Kode API yang dipakai diuji pada **2.5.1+cu121**, sesuai [inventaris](bukti/lingkungan.json). Referensi fungsi dasar ditautkan di README; tidak mengambil kode CycleGAN lengkap dari sumber luar.
 
-Keputusan AI: generator residual sembilan block, filter dasar 64, dua down/up sampling, InstanceNorm non-affine, ReLU, Tanh; discriminator lima Conv 4×4, LeakyReLU dan peta skor mentah 30×30. Normal(0,0.02) untuk convolution, bias nol. Alasan tiap layer ada di README. Kapasitas dan hyperparameter ini adalah baseline sementara, bukan hasil eksperimen.
+Keputusan rancangan berbantuan LLM: generator residual sembilan block, filter dasar 64, dua down/up sampling, InstanceNorm non-affine, ReLU, Tanh; discriminator lima Conv 4×4, LeakyReLU dan peta skor mentah 30×30. Normal(0,0.02) untuk convolution, bias nol. Alasan tiap layer dijelaskan dalam laporan. Kapasitas dan hyperparameter ini adalah baseline sementara, bukan hasil eksperimen.
 
 Inventaris hardware: CUDA tersedia, RTX 3060 Laptop, VRAM 6.441.926.656 byte (6 GiB). Pemeriksaan model tetap CPU, tidak mengukur kebutuhan memori training. Tidak menyimpulkan durasi/kualitas atau konfigurasi batch training dari inventaris ini.
 
 ## 4. Eror dan tindak lanjut yang benar-benar terjadi
 
-Tidak ada pesan debugging tambahan dari pengguna dalam sesi ini. Pertanyaan/prompt perbaikan anggota setelah kegagalan belum diberikan; jangan mengisi bagian itu sebagai percakapan yang pernah terjadi. Penanganan di bawah dilakukan AI selama pengerjaan permintaan awal.
+Tidak ada prompt debugging tambahan dari anggota yang tercatat pada sesi fondasi awal. Penanganan di bawah dilakukan dengan bantuan AI dalam rangkaian implementasi yang sama; tidak direkonstruksi sebagai percakapan perbaikan terpisah yang tidak pernah diberikan.
 
 ### 4.1 Kegagalan awal test-first model
 
@@ -118,7 +120,7 @@ Perubahan akhir: README, kontrak integrasi, log, kerangka laporan, bukti prompt/
 
 Review independen AI pada akhir sesi (menggunakan skill requesting-code-review) mengulang 10 tes dengan hasil lulus dan menjalankan ulang audit dalam memori; seluruh isi hasil audit cocok dengan bukti tersimpan selain timestamp. Reviewer tidak menemukan masalah yang perlu ditindaklanjuti. Ini pemeriksaan bantuan AI, bukan kontribusi/review anggota kelompok atau persetujuan dosen. Assertion tambahan mengonfirmasi hash arsip tetap sama serta tautan dokumen lokal tersedia. Log kegagalan awal lengkap disalin dari output tool sesi ini ke [bukti kegagalan awal](bukti/kegagalan_awal.txt), bukan hasil menjalankan ulang kode yang sengaja dirusak.
 
-## 6. Bukti yang masih harus dikumpulkan
+## 6. Bukti yang belum tersedia pada akhir sesi fondasi awal
 
 - [BELUM DIBERIKAN] Nama kelompok, anggota, NIM, kelas, dan identitas dosen yang diperlukan laporan.
 - [BELUM DILAMPIRKAN] Ekspor chat asli/tautan aktif untuk keseluruhan percakapan; dokumen ini hanya log naratif sesi yang tersedia.
@@ -127,13 +129,13 @@ Review independen AI pada akhir sesi (menggunakan skill requesting-code-review) 
 - [PERLU DILENGKAPI ORANG 3] Log training/debugging aktual, konfigurasi final, checkpoint/resume, hasil eksperimen, grafik dan metrik serta gambar hasil.
 - [BELUM DIBERIKAN] Analisis/refleksi pribadi kelompok. Jangan menggantinya dengan pengalaman AI atau hasil yang belum diukur.
 
-## 7. Sesi lanjutan orang 2, 27 Oktober 2026
+## 7. Implementasi lingkup Peran 2, 27 Oktober 2026
 
-Target: Data Pipeline & Preprocessing Engineer sesuai halaman 2 panduan. Pengguna meminta pemeriksaan screenshot status, sumber Kaggle dan diskusi dengan Claude Opus 5.5 High. [Prompt asli sesi](bukti/prompt_orang2.md), [screenshot yang diterima](bukti/status_awal_orang2.png). Log ini naratif; ekspor chat lengkap/share link tetap harus dilampirkan kelompok.
+Target: lingkup Data Pipeline & Preprocessing Engineer sesuai halaman 2 panduan, mencakup pemeriksaan screenshot status, sumber Kaggle dan diskusi dengan Claude Opus 5.5 High. [Prompt asli sesi](bukti/prompt_orang2.md), [screenshot yang diterima](bukti/status_awal_orang2.png). Berdasarkan klarifikasi kontribusi berikutnya, pengerjaan teknis lingkup ini diambil alih pelaksana Peran 1 dan 4. Ekspor chat lengkap/share link tetap harus dilampirkan kelompok.
 
 ### 7.1 Pemeriksaan awal dan sumber
 
-PDF lima halaman dibaca dengan pypdf; persyaratan orang 2 adalah persiapan dataset, augmentasi, normalisasi, DataLoader dan shape. Tidak menyalin blok implementasi tutorial. Context7 dipakai untuk API dasar Dataset/DataLoader PyTorch 2.5.1, Windows main guard dan fungsi crop/transpose/convert Pillow 12.3.0; implementasi pipeline ditulis untuk kontrak lokal.
+PDF lima halaman dibaca dengan pypdf; lingkup Peran 2 adalah persiapan dataset, augmentasi, normalisasi, DataLoader dan shape. Tidak menyalin blok implementasi tutorial. Context7 dipakai untuk API dasar Dataset/DataLoader PyTorch 2.5.1, Windows main guard dan fungsi crop/transpose/convert Pillow 12.3.0; implementasi pipeline ditulis untuk kontrak lokal.
 
 `python scripts/audit_archive.py preproc.zip --output docs/bukti/audit_orang2_awal.json` mengonfirmasi screenshot: 2.633 cleaned 256 x 256, tujuh mode L, belum ada modul pipeline. Audit juga mencatat metadata salah dan duplikasi.
 
@@ -163,7 +165,7 @@ Skor Laplacian seluruh 2.661 gambar dihitung ulang memakai OpenCV 5.0.0/NumPy ya
 
 Suite terbaru: `python -m unittest discover -s tests -v`, 21 tes lulus (7 model, 3 audit, 11 data); keluaran lengkap pada [tes_orang2.txt](bukti/tes_orang2.txt). `python scripts/check_data.py` memeriksa seluruh file/hash/piksel dan epoch train/test, lalu batch nyata ke empat model default CPU. Output G=[1,3,256,256], D=[1,1,30,30], seluruhnya finite. [Bukti data/model](bukti/pemeriksaan_data.json).
 
-Ini menyelesaikan implementasi dan verifikasi tugas teknis orang 2. Training, checkpoint/resume dan kualitas hasil belum dikerjakan. Test merupakan subset cleaned; orang 3 harus mengambil validasi dari train sebelum tuning. Deduplikasi piksel belum menjamin bebas near-duplicate/crop/encoding berbeda. Identitas, ekspor chat lengkap, riwayat kontribusi manusia dan refleksi kelompok tetap belum disuplai.
+Hasil tersebut menyelesaikan implementasi dan verifikasi lingkup teknis Peran 2, bukan bukti atribusi kepada anggota tertentu. Training, checkpoint/resume dan kualitas hasil belum dikerjakan. Test merupakan subset cleaned; Peran 3 perlu mengambil validasi dari train sebelum tuning. Deduplikasi piksel belum menjamin bebas near-duplicate/crop/encoding berbeda. Identitas, ekspor chat lengkap, riwayat kontribusi manusia dan refleksi kelompok masih perlu dilengkapi.
 
 Verifikasi penutupan: panggilan ketiga Claude Opus 5.5 High mengonfirmasi tiga syarat review telah ditangani dan tidak menemukan bug penting yang menghalangi handoff. Reviewer membaca suite 20 tes pada saat pemeriksaannya; sesudah tambahan tes CLI pin sumber, suite terbaru 21 tes lulus. Respons asli dipertahankan tanpa mengubah angka di dalamnya.
 
@@ -177,7 +179,7 @@ Prompt pengguna terbaru, cuplikan verbatim:
 
 > Referensi historis dalam log dan laporan tetap dipertahankan.
 
-Tujuan dan batas: memeriksa kondisi aktual sebelum mengubah kode, memakai implementasi yang ada, mempertahankan arsitektur/batch, transformasi online dan sampling unpaired, seluruh gambar/split/manifest, serta tidak mengulang persiapan atau membuat training loop/arsip pengganti. Catatan penghapusan berasal dari pengguna; filesystem membuktikan arsip tidak ada, bukan kapan atau bagaimana penghapusan dilakukan.
+Tujuan dan batas: memeriksa kondisi aktual sebelum mengubah kode, memakai implementasi yang ada, mempertahankan arsitektur/batch, transformasi online dan sampling unpaired, seluruh gambar/split/manifest, serta tidak mengulang persiapan atau membuat training loop/arsip pengganti. Penghapusan arsip dilaporkan pelaksana proyek; filesystem membuktikan arsip tidak ada, bukan kapan atau bagaimana penghapusan dilakukan.
 
 ### 8.1 Pemeriksaan sebelum perubahan
 
@@ -192,7 +194,7 @@ Seluruh 2.611 berkas dalam folder final diperiksa: 2.608 gambar serta manifest, 
 - README: root aktif, struktur dataset final, perintah `check_data.py` dengan output baru, contoh loading train/testA/testB, augmentasi online di `cyclegan/data.py`, dan batas reproduksi ZIP. Petunjuk persiapan ulang tidak lagi menjadi langkah penggunaan saat ini. Temuan arsip awal ditandai sebagai sejarah.
 - Kontrak: catatan penggunaan root final serta contoh tiga loader; batch/arsitektur v1.1 dan konfigurasi model dipertahankan. `data_cleaned` dijelaskan sebagai kandidat historis saat persiapan, bukan root loader sekarang.
 - `scripts/prepare_data.py` dan `scripts/audit_archive.py`: hanya docstring/deskripsi `--help` yang diubah agar tujuan dan kebutuhan ZIP eksplisit. Signature, default ZIP, format input dan logika tetap sama; tidak mengganti input ZIP dengan folder.
-- Status orang 2 dan laporan: menambahkan pembaruan penggunaan/penghapusan sebagai informasi pengguna, sambil mempertahankan uraian audit/hash sumber sebelumnya.
+- Dokumen status pipeline dan laporan: menambahkan informasi penghapusan dari pelaksana proyek, sambil mempertahankan uraian audit/hash sumber sebelumnya.
 - Log ini dan tiga berkas bukti baru mencatat hasil sesi tanpa menimpa hasil lama.
 
 ### 8.3 Pemeriksaan yang dijalankan
@@ -220,4 +222,12 @@ Verifikasi sesudah perubahan membandingkan hash seluruh 2.611 berkas dataset dan
 
 Tidak ada kegagalan tes, loader atau model pada sesi penyesuaian. Satu edit dokumentasi sempat ditolak oleh apply_patch dengan `Failed to find expected lines` karena konteks ditulis sebagai sebagian paragraf, bukan satu baris utuh; patch diulang memakai judul sebagai konteks dan berhasil. Tidak ada berkas dataset yang tersentuh.
 
-Riwayat audit dari `preproc.zip`, `data_cleaned`, metadata salah dan hash arsip tidak ditulis ulang seolah-olah persiapan semula berbasis folder. Tanpa ZIP preprocessing asli, audit arsip dan pembandingan/persiapan ulang terhadap sumber preprocessing tidak dapat diulang sepenuhnya. Folder final tetap bisa diverifikasi dan langsung dipakai orang 3. Verifikasi ini tidak membuktikan keberhasilan training atau kualitas penerjemahan.
+Riwayat audit dari `preproc.zip`, `data_cleaned`, metadata salah dan hash arsip tidak ditulis ulang seolah-olah persiapan semula berbasis folder. Tanpa ZIP preprocessing asli, audit arsip dan pembandingan/persiapan ulang terhadap sumber preprocessing tidak dapat diulang sepenuhnya. Folder final tetap bisa diverifikasi dan langsung dipakai Peran 3. Verifikasi ini tidak membuktikan keberhasilan training atau kualitas penerjemahan.
+
+## 9. Penyuntingan dokumentasi akademik, 28 Oktober 2026
+
+Tujuan sesi: menata dokumentasi sebagai proyek tugas kelompok, memperjelas identitas akademik, penggunaan dataset terpisah, status teknis dan kontribusi aktual. Klarifikasi yang diterima menyatakan bahwa pelaksana Peran 1 dan 4 juga mengambil alih pengerjaan teknis Peran 2. Penugasan awal dan kontribusi aktual dipisahkan; nama/NIM yang belum tersedia tetap berupa placeholder.
+
+README diringkas untuk pembaca repository. Laporan disusun menurut pendahuluan, metode, rancangan, implementasi, pengujian dan eksperimen yang belum dilakukan. Kontrak dan status pipeline diselaraskan dengan narasi tersebut; path penggunaan dibuat relatif. Bagian naratif log diperjelas tanpa mengubah kutipan prompt, traceback, tanggal sesi terdahulu atau hasil pengujian. Respons asli, bukti dan arsip rencana proses dipertahankan.
+
+Verifikasi sesi ini terbatas pada konsistensi dokumentasi terhadap kode dan bukti yang tersedia, tautan lokal, path, serta preservasi berkas yang dilindungi. Tidak menjalankan ulang suite model, pipeline lengkap atau training. Angka 21 tes lulus dan hasil batch nyata tetap merujuk bukti 27 Oktober 2026, bukan pengujian baru pada sesi penyuntingan. Tidak ada klaim training berhasil, persetujuan kelompok, kontribusi anggota lain, atau audit orisinalitas menyeluruh.

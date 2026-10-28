@@ -1,8 +1,8 @@
 # Kontrak integrasi fondasi CycleGAN
 
-Status kontrak v1.1, diperbarui pada sesi orang 2 tanggal 27 Oktober 2026. Kontrak training tetap; loader evaluasi dipisah per domain. Arah domain adalah keputusan tetap; kapasitas arsitektur adalah baseline sementara. Perubahan yang memengaruhi interface atau makna checkpoint perlu dicatat dan dikomunikasikan kepada semua anggota.
+Kontrak teknis v1.1 untuk integrasi proyek kelompok. Ketentuan batch dan API berasal dari tahap implementasi pipeline tanggal 27 Oktober 2026; penyuntingan dokumentasi 28 Oktober 2026 tidak mengubah ketentuan tersebut. Loader evaluasi dipisah per domain. Arah domain tetap, sedangkan kapasitas arsitektur masih berupa baseline. Perubahan interface atau makna checkpoint perlu dicatat untuk koordinasi kelompok.
 
-Catatan penggunaan 27 Oktober 2026: root aktif adalah **`data/horse2zebra`** (`D:\genai mid\data\horse2zebra`). `preproc.zip` telah dihapus menurut pengguna dan ketidakberadaannya diverifikasi. Loader/pemeriksaan folder final tidak membutuhkan ZIP; kontrak batch dan arsitektur v1.1 tetap sama.
+Root dataset aktif adalah **`data/horse2zebra`**. Dataset dibagikan terpisah dan tidak disertakan dalam Git. Paketnya harus mencakup trainA/trainB/testA/testB, `manifest.json`, `metadata_corrected.csv`, dan `preparation_report.json`; lokasi distribusi final [BELUM DIBERIKAN]. Penghapusan `preproc.zip` dilaporkan pelaksana proyek dan dikonfirmasi pada sesi 27 Oktober 2026. Loader dan pemeriksaan folder final tidak membutuhkan ZIP.
 
 ## Penamaan dan kepemilikan
 
@@ -15,9 +15,9 @@ Catatan penggunaan 27 Oktober 2026: root aktif adalah **`data/horse2zebra`** (`D
 | D_A | menilai real/fake dalam domain kuda |
 | D_B | menilai real/fake dalam domain zebra |
 
-Peran 1 memiliki arsitektur/API dan koordinasi, Peran 4 memiliki pencatatan bukti. Orang 2 memiliki pipeline dan keputusan split; orang 3 memiliki seluruh implementasi pelatihan dan checkpoint. Tidak ada pipeline atau training loop tersembunyi dalam modul model.
+Pembagian awal menempatkan arsitektur/API dan koordinasi pada Peran 1, pipeline pada Peran 2, pelatihan pada Peran 3, serta dokumentasi pada Peran 4. Kontribusi aktual yang diklarifikasi: pelaksana Peran 1 dan 4 juga mengambil alih pengerjaan teknis Peran 2. Nama/NIM pelaksana dan penanggung jawab awal tiap peran [BELUM DIISI]; kontribusi anggota lain yang belum dilaporkan tidak diasumsikan. Implementasi training, tuning dan checkpoint tetap menjadi tanggung jawab Peran 3 dan belum tersedia. Rincian kontribusi dicatat dalam README dan laporan.
 
-## Orang 2 → orang 3/model
+## Pipeline data → model dan pelatihan
 
 Satu batch adalah dictionary dengan dua key wajib:
 
@@ -27,7 +27,7 @@ batch = {"A": tensor_kuda, "B": tensor_zebra}
 
 Struktur tersebut dihasilkan `create_dataloaders(root)["train"]` yang sudah diimplementasikan pada `cyclegan/data.py`. Metadata/path pada manifest bukan input model. Loader `testA` dan `testB` menghasilkan tensor domain tunggal `[N,3,256,256]` secara terpisah; semua sampel dikunjungi sekali dan batch terakhir tetap disertakan. Jangan menggabungkan loader test dengan `zip` atau menyamakan panjangnya dengan mengulang sampel.
 
-Contoh langsung untuk orang 3 (dari root proyek, `num_workers=0`):
+Contoh integrasi untuk Peran 3 (dari root repository, `num_workers=0`):
 
 ```python
 import torch
@@ -40,24 +40,24 @@ test_A = next(iter(loaders["testA"]))       # tensor kuda
 test_B = next(iter(loaders["testB"]))       # tensor zebra
 ```
 
-Loader membaca gambar dan `manifest.json` pada folder final secara langsung. Augmentasi online, normalisasi dan sampling unpaired tetap berada di `cyclegan/data.py`; gambar, manifest dan split tidak diubah saat loading. Orang 3 dapat langsung memakai pipeline ini tanpa persiapan arsip ulang. Jika menambah worker di Windows, bungkus pembuatan/iterasi loader dalam main guard sebagaimana contoh README.
+Loader membaca gambar dan `manifest.json` pada folder final secara langsung. Augmentasi saat loading, normalisasi dan sampling unpaired berada di `cyclegan/data.py`; gambar, manifest dan split tidak diubah. Peran 3 dapat langsung memakai pipeline tanpa persiapan arsip ulang. Jika menambah worker di Windows, bungkus pembuatan/iterasi loader dalam main guard sebagaimana contoh README.
 
 - Setiap tensor mempunyai shape `[N,3,H,W]`, urutan NCHW, urutan kanal **RGB**, dtype `torch.float32`, nilai finite dalam **[-1,1]**. Batch tidak kosong.
 - Kontrak data proyek sekarang: H=W=256. API model juga mendukung H/W >=32 dan kelipatan 4; bukan dukungan untuk ukuran arbitrer. Kedua tensor dalam batch proyek memakai N/H/W yang sama agar integrasi sederhana.
 - Pasangan A[i] dan B[i] **tidak harus gambar objek yang sama**; CycleGAN memakai data unpaired. Panjang epoch = max(trainA,trainB) = 1.311. Domain lebih besar dikunjungi sekali dalam urutan shuffle; yang lebih kecil diambil acak dengan pengembalian sehingga tidak selalu ada awalan yang diulang. Batch terakhir tidak dibuang. Transform domain dilakukan independen.
-- DataLoader memberikan tensor CPU. Orang 3 memindahkan tensor dan keempat model ke device yang sama. Tensor tidak perlu `requires_grad=True`; autograd menghitung gradient parameter secara normal.
+- DataLoader memberikan tensor CPU. Kode pelatihan Peran 3 memindahkan tensor dan keempat model ke device yang sama. Tensor tidak perlu `requires_grad=True`; autograd menghitung gradient parameter secara normal.
 - Setelah decoding, seluruh gambar dikonversi RGB, termasuk tujuh grayscale yang ditemukan. Normalisasi yang disepakati adalah `x = 2*(pixel_float/255)-1`; jangan menormalkan ulang output Tanh.
 - Tidak memakai mean/std ImageNet. Hasil untuk tampilan dikembalikan dengan `(x+1)/2` lalu dibatasi [0,1] jika perlu, bukan untuk input training yang dinormalisasi ulang.
 - Gunakan hanya dataset final `data/horse2zebra`, seluruhnya PNG RGB 256 x 256. Total final: trainA=1.040, trainB=1.311, testA=118, testB=139. Riwayat persiapan: `data_cleaned` dalam arsip dahulu menjadi kandidat; deduplikasi piksel RGB memprioritaskan test, sehingga `trainA/n02381460_3811.jpg` dikecualikan karena identik dengan testA. Sebanyak 28 blur dan 25 salinan duplikat dikecualikan, dicatat dalam `preparation_report.json`. Loading sekarang tidak mengulang proses tersebut.
-- Pada sesi persiapan sebelumnya, seluruh gambar asli dibandingkan byte demi byte dengan unduhan Kaggle. CSV Kaggle juga memiliki 240 kesalahan path/domain yang sama; koreksi berdasarkan folder asli dan cek silang prefix nama disimpan di `metadata_corrected.csv`. Sumber tidak diubah saat persiapan; penghapusan `preproc.zip` oleh pengguna terjadi sesudahnya. Manifest final SHA-256 `fe9d4e3a940fb9167fead81b21123ed4b12e09487e3a336a695f7d0681e38f2f`.
+- Pada sesi persiapan sebelumnya, seluruh gambar asli dibandingkan byte demi byte dengan unduhan Kaggle. CSV Kaggle juga memiliki 240 kesalahan path/domain yang sama; koreksi berdasarkan folder asli dan cek silang prefix nama disimpan di `metadata_corrected.csv`. Sumber tidak diubah saat persiapan; penghapusan `preproc.zip` dilaporkan setelah tahap tersebut. Manifest final SHA-256 `fe9d4e3a940fb9167fead81b21123ed4b12e09487e3a336a695f7d0681e38f2f`.
 - Train memakai resize bicubic 286, random crop 256 (offset 0..30), horizontal flip 0,5. Test hanya resize bicubic 256 deterministik. Semua RNG sampling/augmentasi memakai torch. `seed` factory mengatur sampler/worker; panggil `torch.manual_seed(seed)` sebelum iterasi bila num_workers=0. Pada Windows, pembuatan/iterasi worker harus dilindungi main guard.
-- Test terfilter oleh kebijakan blur awal, sehingga hasil kelak adalah evaluasi pada subset cleaned. Orang 3 harus mengambil validasi dari train sebelum tuning atau memilih checkpoint; jangan memakai test untuk keputusan tersebut. Deduplikasi belum mendeteksi semua crop/encoding berbeda.
+- Test terfilter oleh kebijakan blur awal, sehingga hasil kelak adalah evaluasi pada subset cleaned. Peran 3 harus mengambil validasi dari train sebelum tuning atau memilih checkpoint; jangan memakai test untuk keputusan tersebut. Deduplikasi belum mendeteksi semua crop/encoding berbeda.
 
-Model memvalidasi rank, batch, kanal, dimensi, dtype, rentang, dan finite pada setiap forward. Tidak ada resize, convert, normalisasi, atau clipping diam-diam. Pemeriksaan nilai menggunakan `.item()` sehingga dapat menyinkronkan CPU/GPU. AMP dan dtype selain float32 belum menjadi kontrak; jika orang 3 menambah AMP, perlu meninjau validasi dan menguji seluruh jalur cycle.
+Model memvalidasi rank, batch, kanal, dimensi, dtype, rentang, dan finite pada setiap forward. Tidak ada resize, convert, normalisasi, atau clipping diam-diam. Pemeriksaan nilai menggunakan `.item()` sehingga dapat menyinkronkan CPU/GPU. AMP dan dtype selain float32 belum menjadi kontrak; penambahan AMP pada Peran 3 memerlukan peninjauan validasi dan pengujian seluruh jalur cycle.
 
-Pemeriksaan aktif: `python scripts/check_data.py --root data/horse2zebra --output docs/bukti/pemeriksaan_dataset_final_tanpa_zip.json`. Script hanya membutuhkan folder final beserta manifest/preparation report, bukan ZIP. `prepare_data.py` dan `audit_archive.py` tetap merupakan utilitas opsional berbasis ZIP; tanpa `preproc.zip` asli, reproduksi persiapan/audit arsip lengkap belum dapat diulang. Hash/provenance dan bukti lama dipertahankan.
+Pemeriksaan aktif: `python scripts/check_data.py --root data/horse2zebra --output tmp/pemeriksaan_data_baru.json`. Gunakan output baru agar bukti historis tidak tertimpa. Script membutuhkan folder final beserta manifest/preparation report, bukan ZIP. `prepare_data.py` dan `audit_archive.py` tetap merupakan utilitas opsional berbasis ZIP; tanpa `preproc.zip` asli, reproduksi persiapan/audit arsip lengkap belum dapat diulang. Hash/provenance dan bukti lama dipertahankan.
 
-## Orang 3 → model
+## Pelatihan Peran 3 → model
 
 ```python
 from dataclasses import asdict
@@ -82,7 +82,7 @@ reconstructed_A = G_BA(fake_B)
 reconstructed_B = G_AB(fake_A)
 ```
 
-Untuk pembaruan discriminator, pemisahan graph fake dengan `detach()` menjadi tanggung jawab training orang 3. Pada pembaruan generator dan jalur cycle, gradient harus dapat melewati model yang dibutuhkan; jangan memutus graph tanpa alasan. Tidak ada detach di dalam forward model.
+Untuk pembaruan discriminator, pemisahan graph fake dengan `detach()` menjadi tanggung jawab kode pelatihan Peran 3. Pada pembaruan generator dan jalur cycle, gradient harus dapat melewati model yang dibutuhkan; jangan memutus graph tanpa alasan. Tidak ada detach di dalam forward model.
 
 ## Output dan pemilihan loss
 
@@ -90,7 +90,7 @@ Generator mengeluarkan float32 `[N,3,H,W]`, dibatasi Tanh ke [-1,1]. Discriminat
 
 Dengan kernel 4 dan stride 2/2/2/1/1, ukuran spasial berturut-turut 256→128→64→32→31→30; receptive field konvolusional nominal 4→10→22→46→70. Normalisasi InstanceNorm menggunakan statistik seluruh fitur spasial; nominal 70×70 mengacu pada jalur konvolusi.
 
-Orang 3 menetapkan adversarial loss dan reduction secara eksplisit. Skor mentah cocok untuk least-squares berbasis MSE dengan target peta real/fake, atau `BCEWithLogitsLoss` bila memilih formulasi BCE. `BCEWithLogitsLoss` sudah menggabungkan sigmoid; jangan menambahkan sigmoid di model atau sebelum loss tersebut. `BCELoss` langsung pada skor mentah tidak sesuai. Target harus mempunyai shape sama dengan prediksi, misalnya dibuat dengan `ones_like`/`zeros_like`, bukan tensor `[N]` yang mengandalkan broadcasting. Cycle/identity loss beserta bobotnya dan pilihan perlu/tidaknya identity loss masih [PERLU DILENGKAPI ORANG 3].
+Peran 3 menetapkan adversarial loss dan reduction secara eksplisit. Skor mentah cocok untuk least-squares berbasis MSE dengan target peta real/fake, atau `BCEWithLogitsLoss` bila memilih formulasi BCE. `BCEWithLogitsLoss` sudah menggabungkan sigmoid; jangan menambahkan sigmoid di model atau sebelum loss tersebut. `BCELoss` langsung pada skor mentah tidak sesuai. Target harus mempunyai shape sama dengan prediksi, misalnya dibuat dengan `ones_like`/`zeros_like`, bukan tensor `[N]` yang mengandalkan broadcasting. Cycle/identity loss beserta bobotnya dan pilihan perlu/tidaknya identity loss masih [PERLU DILENGKAPI PERAN 3].
 
 ## Konfigurasi dan checkpoint
 
@@ -110,7 +110,7 @@ Semua nilai `asdict(config)` wajib disimpan:
 
 `architecture_version` mewakili keputusan tetap dalam kode: kernel/stride/padding, dua down/up sampling, normalisasi non-affine tanpa running stats, bias convolution, aktivasi dan ketiadaan dropout/sigmoid. Jika keputusan tetap berubah, ubah versi dan dokumentasikan; jangan menganggap kesamaan shape state_dict menjamin kesamaan perilaku model. Nilai konfigurasi divalidasi saat konstruksi; versi yang tidak didukung ditolak.
 
-Kontrak payload checkpoint yang perlu dibuat **orang 3**, bukan fitur penyimpanan yang sudah selesai:
+Kontrak payload checkpoint yang perlu dibuat **Peran 3**, bukan fitur penyimpanan yang sudah selesai:
 
 | Key wajib | Isi |
 |---|---|
@@ -123,4 +123,4 @@ Saat restore, buat `ArchitectureConfig(**checkpoint["architecture"])`, buat ulan
 
 ## Kriteria penerimaan handoff
 
-Orang 2: satu batch nyata harus memenuhi seluruh kontrak di atas dan daftar final split harus bebas duplikasi lintas train/test yang diketahui. Orang 3: jalankan pemeriksaan CPU yang ada sebelum integrasi, lalu verifikasi satu langkah training nyata dan penggunaan memori, checkpoint/resume, serta evaluasi terpisah. Bukti langkah training belum tersedia di sesi ini.
+Pipeline: satu batch nyata harus memenuhi seluruh kontrak di atas dan split final harus bebas duplikasi lintas train/test yang diketahui. Bukti pemeriksaan tersedia pada [hasil data/model](bukti/pemeriksaan_dataset_final_tanpa_zip.json). Peran 3 perlu memeriksa integrasi, satu langkah training nyata, penggunaan memori, checkpoint/resume, serta evaluasi terpisah. Pemeriksaan fondasi dan pipeline yang tersedia belum merupakan bukti langkah training.
