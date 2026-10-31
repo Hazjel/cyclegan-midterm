@@ -30,7 +30,7 @@ Panduan tugas mengharuskan kolaborasi dengan LLM, pencatatan prompt/respons dan 
 
 Proses yang tercatat meliputi perumusan kebutuhan dan batas peran melalui prompt, pemeriksaan berkas, perancangan antarmuka, penyusunan kode dengan bantuan LLM, pengujian, serta penanganan masalah. API dasar diperiksa melalui Context7. Model menggunakan layer PyTorch dan autograd tanpa pretrained weights. Uraian proses ini bukan audit orisinalitas menyeluruh terhadap semua sumber eksternal.
 
-[Log interaksi](log_interaksi.md), [prompt tugas awal](bukti/prompt_pengguna.md), [prompt tahap pipeline](bukti/prompt_orang2.md), dan [diskusi teknis Claude](diskusi_claude.md) mempertahankan bukti proses. Review AI tidak diperlakukan sebagai persetujuan dosen atau kontribusi anggota manusia. Ekspor chat lengkap/share link dan penjelasan penguasaan materi masing-masing anggota: [PERLU DILENGKAPI KELOMPOK].
+[Log interaksi](log_interaksi.md), [prompt tugas awal](bukti/prompt_pengguna.md), [prompt tahap pipeline](bukti/prompt_orang2.md), dan [diskusi teknis Claude](diskusi_claude.md) mempertahankan bukti proses. [Percakapan ChatGPT “Bangun fondasi codebase CycleGAN”](https://chatgpt.com/s/cx_6ae56f2a66c4819196c604c1f9cd4f05) diberikan dan berhasil dibuka pada 31 Oktober 2026; halaman tersebut memuat fondasi model, penyesuaian dataset final, serta penyuntingan dokumentasi. Cakupan dan batas buktinya dicatat pada bagian 10 log interaksi. Review AI tidak diperlakukan sebagai persetujuan dosen atau kontribusi anggota manusia. Tautan/ekspor sesi pipeline dan training serta penjelasan penguasaan materi masing-masing anggota: [PERLU DILENGKAPI KELOMPOK].
 
 ## 4. Dataset dan provenance
 
@@ -133,7 +133,7 @@ Pembahasan eksperimen: [PERLU DILENGKAPI PERAN 3]. Refleksi pribadi, penguasaan 
 
 Rancangan dan implementasi fondasi CycleGAN serta pipeline data telah tersedia dan didukung bukti pengujian teknis. Keberhasilan penerjemahan gambar belum dapat disimpulkan karena pelatihan dan evaluasi kualitas belum dilakukan.
 
-Lampiran tersedia: prompt, log interaksi, respons review AI, kode, tes, audit, metadata sumber, manifest/preparation report dan hasil pemeriksaan. Informasi yang belum tersedia: identitas akademik/anggota, lokasi distribusi dataset final, ekspor percakapan lengkap/share link, bukti kontribusi manusia terperinci, refleksi kelompok dan seluruh hasil eksperimen Peran 3.
+Lampiran tersedia: prompt, log interaksi, tautan chat fondasi/penyesuaian/penyuntingan, respons review AI, kode, tes, audit, metadata sumber, manifest/preparation report dan hasil pemeriksaan. Informasi yang belum tersedia: identitas akademik/anggota, lokasi distribusi dataset final, kelengkapan tautan atau ekspor sesi lainnya, bukti kontribusi manusia terperinci, refleksi kelompok dan seluruh hasil eksperimen Peran 3.
 
 ## 11. Referensi dan lampiran
 
