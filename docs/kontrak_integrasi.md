@@ -90,7 +90,7 @@ Generator mengeluarkan float32 `[N,3,H,W]`, dibatasi Tanh ke [-1,1]. Discriminat
 
 Dengan kernel 4 dan stride 2/2/2/1/1, ukuran spasial berturut-turut 256→128→64→32→31→30; receptive field konvolusional nominal 4→10→22→46→70. Normalisasi InstanceNorm menggunakan statistik seluruh fitur spasial; nominal 70×70 mengacu pada jalur konvolusi.
 
-Peran 3 menetapkan adversarial loss dan reduction secara eksplisit. Skor mentah cocok untuk least-squares berbasis MSE dengan target peta real/fake, atau `BCEWithLogitsLoss` bila memilih formulasi BCE. `BCEWithLogitsLoss` sudah menggabungkan sigmoid; jangan menambahkan sigmoid di model atau sebelum loss tersebut. `BCELoss` langsung pada skor mentah tidak sesuai. Target harus mempunyai shape sama dengan prediksi, misalnya dibuat dengan `ones_like`/`zeros_like`, bukan tensor `[N]` yang mengandalkan broadcasting. Cycle/identity loss beserta bobotnya dan pilihan perlu/tidaknya identity loss masih [PERLU DILENGKAPI PERAN 3].
+Script `scripts/train_cyclegan.py` memilih LSGAN-MSE atas skor mentah. Generator menjumlahkan MSE skor fake terhadap `ones_like`; discriminator tiap domain memakai setengah jumlah MSE real terhadap ones dan fake-detach terhadap zeros. Cycle L1 dua arah berbobot 10; identity L1 dua arah berbobot 5 dan aktif secara default. Bobot dan opsi identity tersedia di CLI. Detail dan alasan baseline ada di [panduan training lokal](training_lokal.md).
 
 ## Konfigurasi dan checkpoint
 
@@ -110,7 +110,7 @@ Semua nilai `asdict(config)` wajib disimpan:
 
 `architecture_version` mewakili keputusan tetap dalam kode: kernel/stride/padding, dua down/up sampling, normalisasi non-affine tanpa running stats, bias convolution, aktivasi dan ketiadaan dropout/sigmoid. Jika keputusan tetap berubah, ubah versi dan dokumentasikan; jangan menganggap kesamaan shape state_dict menjamin kesamaan perilaku model. Nilai konfigurasi divalidasi saat konstruksi; versi yang tidak didukung ditolak.
 
-Kontrak payload checkpoint yang perlu dibuat **Peran 3**, bukan fitur penyimpanan yang sudah selesai:
+Script training menyimpan payload checkpoint dengan ketentuan berikut:
 
 | Key wajib | Isi |
 |---|---|

@@ -23,7 +23,7 @@ Pengembangan menggunakan metode *vibe coding*: kebutuhan dan rancangan dirumuska
 | Model | Generator residual, PatchGAN, dan konfigurasi bersama tersedia |
 | Pipeline data | Dataset, augmentasi saat loading, normalisasi, dan DataLoader unpaired tersedia |
 | Pengujian | Bukti 21 tes lulus serta pemeriksaan seluruh dataset dan batch nyata tersedia |
-| Pelatihan dan tuning | Belum diimplementasikan; tanggung jawab Peran 3 |
+| Pelatihan dan tuning | Script tersedia; hasil eksperimen belum dihasilkan |
 | Hasil eksperimen | Belum tersedia: grafik, metrik kualitas, checkpoint pelatihan, dan gambar hasil |
 
 Generator menggunakan filter dasar 64, sembilan residual block, InstanceNorm, ReLU, dan output Tanh. PatchGAN menghasilkan skor mentah tanpa sigmoid. Bobot convolution diinisialisasi normal(0, 0.02) dengan bias nol. Dua instance masing-masing kelas mempunyai parameter terpisah. Kapasitas ini masih berupa baseline, belum hasil tuning; rincian dan alasan rancangan terdapat dalam [laporan](docs/laporan.md) dan [kontrak integrasi](docs/kontrak_integrasi.md).
@@ -37,6 +37,7 @@ cyclegan/
   data.py                 # ImageDataset, UnpairedDataset, create_dataloaders
   __init__.py             # ekspor API publik
 scripts/
+  train_cyclegan.py       # training, validasi train, checkpoint, evaluasi test
   check_data.py           # pemeriksaan dataset final dan batch nyata
   prepare_data.py         # utilitas opsional persiapan dari ZIP sumber
   audit_archive.py        # utilitas opsional audit ZIP sumber
@@ -118,7 +119,7 @@ D_A = PatchDiscriminator(config)
 D_B = PatchDiscriminator(config)
 ```
 
-Format output, pemilihan loss, perpindahan device, dan konfigurasi checkpoint dijelaskan dalam [kontrak integrasi](docs/kontrak_integrasi.md). Training loop belum tersedia.
+Training dapat dimulai dengan `Set-Location E:\midterm\cyclegan-midterm` lalu `python scripts\train_cyclegan.py --device auto --batch-size 1`. Rincian loss, tuning, output, validasi dan resume ada di [panduan training lokal](docs/training_lokal.md); API dan kontrak tetap di [kontrak integrasi](docs/kontrak_integrasi.md).
 
 ## Pengujian dan hasil aktual
 
@@ -144,7 +145,7 @@ Pemetaan kontribusi ini mengikuti klarifikasi pelaksana proyek. Nama berkas `sta
 
 ## Keterbatasan dan pekerjaan berikutnya
 
-Pelatihan, tuning, penggunaan memori training, checkpoint/resume, dan evaluasi kualitas belum dilakukan. Inventaris terdahulu mencatat RTX 3060 Laptop 6 GiB; kapasitas training penuh belum diukur. Peran 3 perlu menentukan konfigurasi pelatihan dan menyisihkan validasi dari train sebelum memilih hyperparameter atau checkpoint.
+Script training, validasi, checkpoint/resume dan evaluasi telah disediakan, tetapi belum dijalankan. Penggunaan memori training, tuning, serta kualitas hasil belum diketahui. Pengguna melaporkan target lokal RTX 4050 Laptop 6 GB; kapasitas batch harus dikonfirmasi pada mesin tersebut. Jangan memakai test untuk memilih hyperparameter atau checkpoint.
 
 Test merupakan subset yang telah melalui penyaringan blur, bukan benchmark Kaggle penuh. Pemeriksaan piksel identik belum menjamin tidak ada gambar mirip atau crop berbeda. Tanpa ZIP preprocessing asli, audit dan persiapan ulang terhadap arsip tersebut tidak dapat diulang sepenuhnya. Identitas akademik, distribusi dataset final, bukti kontribusi anggota, ekspor chat lengkap, dan refleksi kelompok masih perlu dilengkapi.
 
