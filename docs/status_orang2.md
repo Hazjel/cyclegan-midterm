@@ -1,5 +1,7 @@
 # Status Teknis Peran 2: Pipeline Data dan Preprocessing
 
+**Pembaruan integrasi 3 November 2026:** skrip training/evaluasi dari commit remote anggota lain `5fe225b` tersedia di `scripts/` dan tetap memakai API publik `from cyclegan import create_dataloaders`. Pernyataan inventaris 31 Oktober di bawah merupakan riwayat sebelum fetch. Gunakan `--dataset-root data/horse2zebra`; lihat [panduan training](training_lokal.md). Hasil run dan integrasi training penuh belum diverifikasi.
+
 ## Lingkup dan atribusi kontribusi
 
 Peran 2 pada pembagian awal mencakup penyiapan dataset, preprocessing, augmentasi, normalisasi, dan DataLoader. **Pengerjaan teknis lingkup ini diambil alih oleh pelaksana Peran 1 dan 4**, sesuai klarifikasi kontribusi aktual. Nama dan NIM pelaksana: [PERLU DILENGKAPI: nama/NIM pelaksana teknis Peran 2]. Penanggung jawab awal Peran 2: [PERLU DILENGKAPI: nama/NIM penanggung jawab awal].

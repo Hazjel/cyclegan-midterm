@@ -15,7 +15,7 @@ Root dataset aktif adalah **`data/horse2zebra`**. Dataset dibagikan terpisah dan
 | D_A | menilai real/fake dalam domain kuda |
 | D_B | menilai real/fake dalam domain zebra |
 
-Pembagian awal menempatkan arsitektur/API dan koordinasi pada Peran 1, pipeline pada Peran 2, pelatihan pada Peran 3, serta dokumentasi pada Peran 4. Kontribusi aktual yang diklarifikasi: pelaksana Peran 1 dan 4 juga mengambil alih pengerjaan teknis Peran 2. Nama/NIM pelaksana dan penanggung jawab awal tiap peran [PERLU DILENGKAPI: nama/NIM pelaksana dan penanggung jawab awal setiap peran]; kontribusi anggota lain yang belum dilaporkan tidak diasumsikan. Implementasi training, tuning dan checkpoint tetap menjadi tanggung jawab Peran 3; pada inventaris 31 Oktober 2026 belum ditemukan kode atau artefaknya di workspace. Peran 4 kini dikerjakan bersama beberapa anggota; identitas penyunting dan paket kerja perlu dicatat terpisah dari pelaksana kode dalam [koordinasi dokumentasi](koordinasi_dokumentasi.md). Rincian kontribusi dicatat dalam README dan laporan.
+Pembagian awal menempatkan arsitektur/API dan koordinasi pada Peran 1, pipeline pada Peran 2, pelatihan pada Peran 3, serta dokumentasi pada Peran 4. Kontribusi aktual yang diklarifikasi: pelaksana Peran 1 dan 4 juga mengambil alih pengerjaan teknis Peran 2. Nama/NIM pelaksana dan penanggung jawab awal tiap peran [PERLU DILENGKAPI: nama/NIM pelaksana dan penanggung jawab awal setiap peran]; kontribusi anggota lain yang belum dilaporkan tidak diasumsikan. Implementasi training, tuning dan checkpoint tetap menjadi tanggung jawab Peran 3; pada inventaris lokal 31 Oktober 2026 belum ditemukan kode atau artefaknya. Pada integrasi 3 November 2026, commit remote `5fe225b` menyediakan `scripts/train_cyclegan.py` dan `scripts/evaluate_cyclegan.py`; hasil run belum terverifikasi. Gunakan `--dataset-root data/horse2zebra` secara eksplisit dari root repository. Peran 4 kini dikerjakan bersama beberapa anggota; identitas penyunting dan paket kerja perlu dicatat terpisah dari pelaksana kode dalam [koordinasi dokumentasi](koordinasi_dokumentasi.md). Rincian kontribusi dicatat dalam README dan laporan.
 
 ## Pipeline data → model dan pelatihan
 
@@ -90,7 +90,7 @@ Generator mengeluarkan float32 `[N,3,H,W]`, dibatasi Tanh ke [-1,1]. Discriminat
 
 Dengan kernel 4 dan stride 2/2/2/1/1, ukuran spasial berturut-turut 256→128→64→32→31→30; receptive field konvolusional nominal 4→10→22→46→70. Normalisasi InstanceNorm menggunakan statistik seluruh fitur spasial; nominal 70×70 mengacu pada jalur konvolusi.
 
-Peran 3 menetapkan adversarial loss dan reduction secara eksplisit. Skor mentah cocok untuk least-squares berbasis MSE dengan target peta real/fake, atau `BCEWithLogitsLoss` bila memilih formulasi BCE. `BCEWithLogitsLoss` sudah menggabungkan sigmoid; jangan menambahkan sigmoid di model atau sebelum loss tersebut. `BCELoss` langsung pada skor mentah tidak sesuai. Target harus mempunyai shape sama dengan prediksi, misalnya dibuat dengan `ones_like`/`zeros_like`, bukan tensor `[N]` yang mengandalkan broadcasting. Cycle/identity loss beserta bobotnya dan pilihan perlu/tidaknya identity loss masih [PERLU DILENGKAPI: konfigurasi, bukti dan hasil aktual dari Peran 3].
+Script `scripts/train_cyclegan.py` memilih LSGAN-MSE atas skor mentah. Generator menjumlahkan MSE skor fake terhadap `ones_like`; discriminator tiap domain memakai setengah jumlah MSE real terhadap ones dan fake-detach terhadap zeros. Cycle L1 dua arah berbobot 10; identity L1 dua arah berbobot 5 dan aktif secara default. Bobot dan opsi identity tersedia di CLI. Detail dan alasan baseline ada di [panduan training lokal](training_lokal.md).
 
 ## Konfigurasi dan checkpoint
 
@@ -110,7 +110,7 @@ Semua nilai `asdict(config)` wajib disimpan:
 
 `architecture_version` mewakili keputusan tetap dalam kode: kernel/stride/padding, dua down/up sampling, normalisasi non-affine tanpa running stats, bias convolution, aktivasi dan ketiadaan dropout/sigmoid. Jika keputusan tetap berubah, ubah versi dan dokumentasikan; jangan menganggap kesamaan shape state_dict menjamin kesamaan perilaku model. Nilai konfigurasi divalidasi saat konstruksi; versi yang tidak didukung ditolak.
 
-Kontrak payload checkpoint yang perlu dibuat **Peran 3**, bukan fitur penyimpanan yang sudah selesai:
+Skrip training menyediakan penyimpanan payload checkpoint berikut; keberhasilan checkpoint/resume masih perlu dibuktikan melalui pengujian run:
 
 | Key wajib | Isi |
 |---|---|

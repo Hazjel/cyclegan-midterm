@@ -1,5 +1,7 @@
 # Koordinasi Dokumentasi Kelompok — Peran 4
 
+**Pembaruan integrasi 3 November 2026:** skrip training/evaluasi kini tersedia dari commit remote anggota lain `5fe225b`; lihat [panduan training](training_lokal.md). Inventaris 31 Oktober di bawah tetap mencatat keadaan lokal sebelum fetch tersebut. DOK-03 kini perlu mengumpulkan bukti eksekusi dan hasil dari skrip yang tersedia, bukan menganggap implementasinya belum ada. Identitas penanggung jawab peran/penyunting tetap perlu dikonfirmasi tim.
+
 Status: **draf kompilasi berbasis bukti, 31 Oktober 2026; bukan laporan final**.
 Nama kelompok: [PERLU DILENGKAPI: nama atau nomor kelompok].
 Penyusun dokumentasi: beberapa anggota tim; [PERLU DILENGKAPI: nama, NIM, paket kerja dan hasil suntingan setiap anggota].

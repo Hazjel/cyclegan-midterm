@@ -23,7 +23,7 @@ Pengembangan menggunakan metode *vibe coding* melalui **GPT/ChatGPT**, sesuai kl
 | Model | Generator residual, PatchGAN, dan konfigurasi bersama tersedia |
 | Pipeline data | Dataset, augmentasi saat loading, normalisasi, dan DataLoader unpaired tersedia |
 | Pengujian | Bukti 21 tes lulus serta pemeriksaan seluruh dataset dan batch nyata tersedia |
-| Pelatihan dan tuning | Implementasi/artefak belum ditemukan pada berkas yang diperiksa 31 Oktober 2026; konfirmasi pekerjaan di luar workspace diperlukan dari Peran 3 |
+| Pelatihan dan tuning | Skrip training/evaluasi tersedia dari commit anggota lain `5fe225b`, digabungkan 3 November 2026; hasil eksperimen belum terverifikasi |
 | Hasil eksperimen | Belum ditemukan log run, grafik, metrik kualitas, checkpoint pelatihan atau gambar hasil yang dapat diverifikasi |
 
 Generator menggunakan filter dasar 64, sembilan residual block, InstanceNorm, ReLU, dan output Tanh. PatchGAN menghasilkan skor mentah tanpa sigmoid. Bobot convolution diinisialisasi normal(0, 0.02) dengan bias nol. Dua instance masing-masing kelas mempunyai parameter terpisah. Kapasitas ini masih berupa baseline, belum hasil tuning; rincian dan alasan rancangan terdapat dalam [laporan](docs/laporan.md) dan [kontrak integrasi](docs/kontrak_integrasi.md).
@@ -41,8 +41,12 @@ preprocessing/
   check_data.py           # pemeriksaan dataset final dan batch nyata
   prepare_data.py         # utilitas opsional persiapan dari ZIP sumber
   audit_archive.py        # utilitas opsional audit ZIP sumber
+scripts/
+  train_cyclegan.py        # training, validasi, checkpoint dan evaluasi
+  evaluate_cyclegan.py     # evaluasi checkpoint terpilih tanpa training
 tests/                    # tes model, pipeline, dan utilitas arsip
 docs/
+  training_lokal.md        # penggunaan skrip training/evaluasi
   kontrak_integrasi.md
   laporan.md
   status_orang2.md         # status teknis Peran 2; bukan atribusi anggota
@@ -135,7 +139,7 @@ D_A = PatchDiscriminator(config)
 D_B = PatchDiscriminator(config)
 ```
 
-Format output, pemilihan loss, perpindahan device, dan konfigurasi checkpoint dijelaskan dalam [kontrak integrasi](docs/kontrak_integrasi.md). Training loop belum tersedia.
+Skrip training tersedia dari kontribusi remote anggota lain. Dari root repository, gunakan `python scripts/train_cyclegan.py --dataset-root data/horse2zebra --device auto --batch-size 1`. Argumen dataset harus eksplisit karena default skrip menunjuk folder `data/horse2zebra` di direktori induk repository. Rincian loss, tuning, validasi, output dan resume tersedia pada [panduan training lokal](docs/training_lokal.md); API tetap mengikuti [kontrak integrasi](docs/kontrak_integrasi.md). Keberadaan skrip belum membuktikan pelatihan berhasil.
 
 ## Pengujian dan hasil aktual
 
@@ -156,14 +160,14 @@ Verifikasi penataan 3 November 2026 mengulang seluruh 21 tes, termasuk worker Wi
 |---|---|---|---|
 | 1 — Prompt Engineer & LLM Navigator | Rancangan, prompt, konsistensi kode, integrasi | [PERLU DILENGKAPI: nama/NIM pelaksana Peran 1 dan 4] | Menangani fondasi model dan koordinasi teknis dengan bantuan LLM |
 | 2 — Data Pipeline & Preprocessing Engineer | Dataset, preprocessing, augmentasi, normalisasi, DataLoader | [PERLU DILENGKAPI: nama/NIM penanggung jawab awal Peran 2] | Pengerjaan teknis diambil alih oleh pelaksana Peran 1 dan 4 |
-| 3 — Training Loop & Hyperparameter Tuning Engineer | Loss, optimizer, training, tuning, checkpoint, metrik | [PERLU DILENGKAPI: nama/NIM penanggung jawab Peran 3] | Implementasi dan hasil training belum tersedia |
+| 3 — Training Loop & Hyperparameter Tuning Engineer | Loss, optimizer, training, tuning, checkpoint, metrik | [PERLU DILENGKAPI: nama/NIM penanggung jawab Peran 3] | Skrip tersedia dari commit remote `5fe225b`; hasil training belum dapat diverifikasi |
 | 4 — Lead Documentarian & Error Handler | Log interaksi, debugging, laporan | Pelaksana Peran 1/4 pada penugasan yang dilaporkan terdahulu | Kini dikerjakan bersama beberapa anggota; [PERLU DILENGKAPI: nama/NIM penyunting dan bagian yang dikerjakan] |
 
 Pemetaan kontribusi ini mengikuti klarifikasi pelaksana proyek. Nama berkas `status_orang2.md` dan label “orang 2” pada bukti lama menunjukkan lingkup peran, bukan bukti bahwa anggota yang semula ditugaskan pada Peran 2 menulis implementasinya. Kontribusi anggota lain yang belum dilaporkan tidak diasumsikan. Klarifikasi terbaru menempatkan Peran 4 sebagai pekerjaan kolaboratif beberapa anggota. Pemilik peran awal, pelaksana teknis, dan penyunting dibedakan dalam [koordinasi dokumentasi](docs/koordinasi_dokumentasi.md); empat paket kerja di sana masih usulan sampai tim mengisi pelaksana/peninjau. [Register debugging](docs/debugging.md) melengkapi log asli.
 
 ## Keterbatasan dan pekerjaan berikutnya
 
-Pada inventaris 31 Oktober 2026, belum ditemukan implementasi maupun artefak yang membuktikan pelatihan, tuning, penggunaan memori training, checkpoint/resume, atau evaluasi kualitas. [PERLU DILENGKAPI: konfirmasi Peran 3 dan bukti pekerjaan di luar workspace jika ada]. Inventaris terdahulu mencatat RTX 3060 Laptop 6 GiB; kapasitas training penuh belum diukur. Peran 3 perlu menentukan konfigurasi pelatihan dan menyisihkan validasi dari train sebelum memilih hyperparameter atau checkpoint.
+Skrip training, validasi, checkpoint/resume dan evaluasi dari commit `5fe225b` dipertahankan pada integrasi 3 November 2026. Log run, checkpoint, grafik dan keluaran training belum tersedia sebagai bukti hasil. Kapasitas memori, tuning dan kualitas terjemahan belum diverifikasi. Inventaris terdahulu mencatat RTX 3060 Laptop 6 GiB; panduan anggota lain menyebut target RTX 4050 Laptop 6 GB, yang belum diperiksa pada sesi integrasi. Jangan memakai test untuk memilih hyperparameter atau checkpoint. [PERLU DILENGKAPI: konfigurasi run aktual dan bukti hasil dari Peran 3].
 
 Test merupakan subset yang telah melalui penyaringan blur, bukan benchmark Kaggle penuh. Pemeriksaan piksel identik belum menjamin tidak ada gambar mirip atau crop berbeda. Tanpa ZIP preprocessing asli, audit dan persiapan ulang terhadap arsip tersebut tidak dapat diulang sepenuhnya. Identitas akademik, distribusi dataset final, bukti kontribusi anggota, ekspor chat lengkap, dan refleksi kelompok masih perlu dilengkapi.
 

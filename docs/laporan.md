@@ -1,5 +1,7 @@
 # Laporan Proyek Kelompok: CycleGAN Kuda ↔ Zebra
 
+**Pembaruan integrasi 3 November 2026:** commit remote anggota lain `5fe225b` menambahkan `scripts/train_cyclegan.py`, `scripts/evaluate_cyclegan.py` dan [panduan training](training_lokal.md). Skrip dipertahankan bersama penataan preprocessing. Pernyataan belum ditemukannya implementasi pada inventaris 31 Oktober di bawah adalah kondisi lokal saat itu, bukan status kode terkini. Default CLI yang tersedia adalah LSGAN-MSE, cycle L1 berbobot 10, identity L1 berbobot 5, Adam lr=0,0002 dengan betas=(0,5;0,999), 100 epoch, batch 1, seed 7, dan holdout train 5%. Ini konfigurasi kode, bukan konfigurasi run yang sudah dibuktikan. Gunakan `--dataset-root data/horse2zebra` secara eksplisit. Hasil training, checkpoint/resume dan kualitas terjemahan belum diverifikasi pada sesi integrasi; bagian eksperimen tetap perlu dilengkapi.
+
 Tema tugas: **Vibe Coding Generative AI from Scratch**.
 
 **Status:** draf kompilasi kelompok, diperbarui 31 Oktober 2026. Fondasi model dan pipeline tersedia. Inventaris kode, folder dan daftar isi arsip lokal belum menemukan implementasi atau hasil pelatihan yang dapat diverifikasi; kegiatan di luar workspace perlu dikonfirmasi Peran 3. Bukti tes/data berasal dari 27 Oktober 2026; penyuntingan 28 Oktober dan kompilasi sekarang tidak mengubah tanggal hasil tersebut.
