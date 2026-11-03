@@ -2,13 +2,13 @@
 
 ## Lingkup dan atribusi kontribusi
 
-Peran 2 pada pembagian awal mencakup penyiapan dataset, preprocessing, augmentasi, normalisasi, dan DataLoader. **Pengerjaan teknis lingkup ini diambil alih oleh pelaksana Peran 1 dan 4**, sesuai klarifikasi kontribusi aktual. Nama dan NIM pelaksana: [NAMA/NIM PELAKSANA PERAN 1 DAN 4]. Penanggung jawab awal Peran 2: [NAMA/NIM BELUM DIISI].
+Peran 2 pada pembagian awal mencakup penyiapan dataset, preprocessing, augmentasi, normalisasi, dan DataLoader. **Pengerjaan teknis lingkup ini diambil alih oleh pelaksana Peran 1 dan 4**, sesuai klarifikasi kontribusi aktual. Nama dan NIM pelaksana: [PERLU DILENGKAPI: nama/NIM pelaksana teknis Peran 2]. Penanggung jawab awal Peran 2: [PERLU DILENGKAPI: nama/NIM penanggung jawab awal].
 
-Nama berkas ini dipertahankan untuk kesinambungan tautan dan log. Sebutan “orang 2” pada arsip menunjukkan lingkup tugas; implementasi tidak diatribusikan kepada anggota tertentu hanya berdasarkan label tersebut. Kontribusi manusia lain yang belum dilaporkan tidak diasumsikan. Rincian penugasan awal terdapat dalam [README](../README.md).
+Nama berkas ini dipertahankan untuk kesinambungan tautan dan log. Sebutan “orang 2” pada arsip menunjukkan lingkup tugas; implementasi tidak diatribusikan kepada anggota tertentu hanya berdasarkan label tersebut. Kontribusi manusia lain yang belum dilaporkan tidak diasumsikan. Rincian penugasan awal terdapat dalam [README](../README.md). Peran 4 kini dikerjakan bersama beberapa anggota; [PERLU DILENGKAPI: nama/NIM pengumpul bukti pipeline, penyunting dan peninjau]. Pembagian paket kerja dan kekurangan bukti dicatat dalam [koordinasi dokumentasi](koordinasi_dokumentasi.md), terpisah dari atribusi pelaksana kode.
 
 ## Status implementasi
 
-Pipeline tersedia pada `cyclegan/data.py`. Root aktif adalah `data/horse2zebra`; dataset dibagikan terpisah dan tidak disertakan dalam Git. Paket final harus memuat empat folder gambar serta `manifest.json`, `metadata_corrected.csv`, dan `preparation_report.json`. Lokasi distribusi paket final: [BELUM DIBERIKAN].
+Pipeline tersedia pada `preprocessing/data.py` sejak penataan 3 November 2026, bersama utilitas persiapan/audit/pemeriksaan di paket `preprocessing/`. Folder ini berisi kode, sedangkan root hasil dataset tetap `data/horse2zebra`; dataset dibagikan terpisah dan tidak disertakan dalam Git. Paket final harus memuat empat folder gambar serta `manifest.json`, `metadata_corrected.csv`, dan `preparation_report.json`. API publik `from cyclegan import create_dataloaders` tetap tersedia melalui re-export langsung. Pemetaan path lama ada pada README; perilaku dan bukti historis dipertahankan. Lokasi distribusi paket final: [PERLU DILENGKAPI: bahan atau lokasi distribusi yang belum diserahkan].
 
 | Komponen | Implementasi atau hasil yang tersedia |
 |---|---|
@@ -41,7 +41,7 @@ Sumber yang dicatat adalah [Kaggle Balraj Ashwath](https://www.kaggle.com/datase
 
 Pada tahap persiapan, 2.661 gambar asli dibandingkan byte demi byte dengan arsip lokal. Kedua ZIP tidak dimodifikasi selama proses tersebut. ZIP Kaggle SHA-256 `0655d8feb8eb83911ac08c1d230a0464794418c107412a28adc47e1eb69e90a0` dipin pada CLI `prepare_data.py`; fungsi intinya juga digunakan untuk fixture sintetis tes. Koreksi metadata dan pengecualian tidak mengubah sumber pada saat persiapan.
 
-Penghapusan `preproc.zip` dilaporkan pelaksana proyek dan ketidakberadaannya dikonfirmasi pada sesi 27 Oktober 2026. Catatan ini terpisah dari riwayat persiapan sebelumnya. Loader dan `check_data.py` tetap menggunakan folder final tanpa ZIP. `prepare_data.py` dan `audit_archive.py` adalah utilitas opsional berbasis arsip; reproduksi penuh terhadap preprocessing sumber memerlukan ZIP asli yang kini tidak tersedia.
+Penghapusan `preproc.zip` dilaporkan pelaksana proyek dan ketidakberadaannya dikonfirmasi pada sesi 27 Oktober 2026. Catatan ini terpisah dari riwayat persiapan sebelumnya. Loader dan `preprocessing/check_data.py` tetap menggunakan folder final tanpa ZIP. `preprocessing/prepare_data.py` dan `preprocessing/audit_archive.py` adalah utilitas opsional berbasis arsip; reproduksi penuh terhadap preprocessing sumber memerlukan ZIP asli yang kini tidak tersedia.
 
 ## Integrasi ke Peran 3
 
@@ -49,7 +49,7 @@ Gunakan `create_dataloaders("data/horse2zebra")` sesuai [README](../README.md) d
 
 Loader testA/testB menghasilkan tensor domain tunggal. Keduanya diiterasi terpisah tanpa `zip` atau pengulangan agar seluruh 118 kuda dan 139 zebra tercakup. Untuk `num_workers=0`, seed torch ditetapkan sebelum iterasi; worker Windows memerlukan main guard.
 
-Peran 3 perlu menyimpan manifest/hash, konfigurasi transform, seed dan state RNG bersama checkpoint, serta mengambil validasi dari train sebelum tuning atau pemilihan checkpoint. Pipeline siap diintegrasikan; implementasi training, checkpoint dan evaluasi kualitas belum tersedia.
+Peran 3 perlu menyimpan manifest/hash, konfigurasi transform, seed dan state RNG bersama checkpoint, serta mengambil validasi dari train sebelum tuning atau pemilihan checkpoint. Pipeline siap diintegrasikan. Pada pemeriksaan berkas 31 Oktober 2026 belum ditemukan implementasi/artefak training, checkpoint atau evaluasi kualitas; [PERLU DILENGKAPI: konfirmasi Peran 3 dan bukti run bila dikerjakan di luar workspace].
 
 ## Bukti verifikasi
 
@@ -60,7 +60,11 @@ Bukti berikut berasal dari pemeriksaan 27 Oktober 2026, bukan eksekusi ulang pad
 - [Preservasi dataset](bukti/preservasi_dataset_final_tanpa_zip.json): hash dataset, kode dan bukti historis tidak berubah pada sesi penyesuaian path.
 - [Audit persiapan](bukti/preparation_report.json), [manifest final](bukti/manifest.json), dan [metadata terkoreksi](bukti/metadata_corrected.csv).
 - [Pemeriksaan ulang blur](bukti/verifikasi_blur.json): 2.661 skor cocok dengan CSV, tanpa mismatch.
-- [Diskusi teknis LLM](diskusi_claude.md): respons Claude Opus 5.5 High dipertahankan sebagai bukti proses, bukan persetujuan dosen atau bukti kontribusi anggota manusia.
+- [Diskusi GPT/ChatGPT](diskusi_llm.md): sumber yang diberikan mendukung rangkaian fondasi, penyesuaian dataset final dan penyuntingan. [PERLU DILENGKAPI: ekspor asli sesi implementasi pipeline]. Arsip berlabel Claude/Opus dipertahankan dengan status belum terverifikasi dan dikeluarkan dari bukti valid; permintaan alat pada prompt bukan bukti pelaksanaannya.
+
+Studi eror fixture dan sumber yang belum lengkap dihimpun dalam [register debugging](debugging.md): traceback impor tersedia, sedangkan traceback gagal variasi augmentasi dan helper traversal masih perlu dikumpulkan. Status terselesaikan pada log tes tidak otomatis membuktikan seluruh penjelasan sebab historis.
+
+Pada penataan 3 November 2026, suite 21 tes dan pemeriksaan dataset melalui `preprocessing.check_data` diulang dengan hasil berhasil. API publik tetap menunjuk objek loader yang sama; implementasi dan dataset tetap identik menurut hash. Hasil baru tersimpan di `tmp/preprocessing_2026-11-03/`, tanpa menimpa lampiran historis di atas.
 
 ## Keterbatasan
 

@@ -12,8 +12,9 @@ import zipfile
 from PIL import Image
 import torch
 
-from scripts.prepare_data import prepare_data
-from cyclegan.data import ImageDataset, UnpairedDataset, create_dataloaders
+from cyclegan import create_dataloaders as public_create_dataloaders
+from preprocessing.prepare_data import prepare_data
+from preprocessing.data import ImageDataset, UnpairedDataset, create_dataloaders
 
 
 class DataTests(unittest.TestCase):
@@ -102,7 +103,7 @@ class DataTests(unittest.TestCase):
         self.assertFalse(self.output.exists())
 
     def test_cli_rejects_unpinned_source(self):
-        script = Path(__file__).resolve().parents[1] / "scripts" / "prepare_data.py"
+        script = Path(__file__).resolve().parents[1] / "preprocessing" / "prepare_data.py"
         result = subprocess.run([sys.executable, str(script), "--preproc", str(self.preproc),
                                  "--source", str(self.source), "--output", str(self.output)],
                                 capture_output=True, text=True)
@@ -159,6 +160,7 @@ class DataTests(unittest.TestCase):
         self.assertFalse(self.output.exists())
 
     def test_loaders_keep_eval_domains_separate_and_batch_last_samples(self):
+        self.assertIs(public_create_dataloaders, create_dataloaders)
         self.prepare()
         dataset = UnpairedDataset(self.output)
         self.assertEqual(len(dataset), 2)

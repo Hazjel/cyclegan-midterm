@@ -1,3 +1,10 @@
+# Arsip Atribusi Claude — Belum Terverifikasi
+
+> **Koreksi 3 November 2026:** tim mengklarifikasi penggunaan GPT/ChatGPT. Klaim eksekusi Claude/Anthropic/Opus, CLI dan review pada teks lama di bawah belum terverifikasi dan **tidak dipakai sebagai bukti penggunaan alat, review independen, atau dasar kesimpulan laporan**. Isi lama dipertahankan utuh sebagai arsip, bukan diatribusikan ulang kepada GPT. Rujukan aktif: [diskusi GPT/ChatGPT dan register atribusi](diskusi_llm.md).
+
+<details>
+<summary>Teks arsip asli — seluruh klaim atribusi/review di dalamnya belum terverifikasi</summary>
+
 # Diskusi dan review Claude Opus 5.5 High
 
 Tiga panggilan nyata memakai CLI `claude`, model `claude-opus-5-5`, `--effort high`, mode plan, tool Read/Glob/Grep. Tidak ada modifikasi berkas oleh reviewer. JSON mentah merekam model aktual, session_id dan hasil.
@@ -205,3 +212,5 @@ Panggilan ketiga memakai model/effort yang sama; mode safe-mode, read-only. [Res
 **Model:** Claude Opus 5.5 (`claude-opus-5-5`).
 
 Catatan waktu: review penutup membaca suite 20 tes sebelum tambahan tes CLI penolakan sumber yang tidak dipin. Suite terbaru sesudah tambahan tersebut berisi 21 tes, seluruhnya lulus; tambahan ini tidak mengubah kode produksi. Log final ada pada bukti/tes_orang2.txt.
+
+</details>
