@@ -3,7 +3,7 @@
 **Pembaruan integrasi 3 November 2026:** skrip training/evaluasi kini tersedia dari commit remote anggota lain `5fe225b`; lihat [panduan training](training_lokal.md). Inventaris 31 Oktober di bawah tetap mencatat keadaan lokal sebelum fetch tersebut. DOK-03 kini perlu mengumpulkan bukti eksekusi dan hasil dari skrip yang tersedia. Identitas penanggung jawab Peran 1–3 dilengkapi dari laporan Word pada 7 November 2026; rincian penyuntingan setiap anggota tetap perlu dicatat.
 
 Status: **draf kompilasi berbasis bukti, 31 Oktober 2026; bukan laporan final**.
-Nama kelompok: [PERLU DILENGKAPI: nama atau nomor kelompok].
+Nama kelompok: Kelompok 2.
 Penyusun dokumentasi: beberapa anggota tim; [PERLU DILENGKAPI: nama, NIM, paket kerja dan hasil suntingan setiap anggota].
 
 Catatan struktur 3 November 2026: path kode aktif di bawah mengikuti pemindahan ke `preprocessing/`; tanggal inventaris, hasil pengujian dan bukti 27/31 Oktober tetap historis. `data/horse2zebra` adalah dataset hasil, bukan folder kode. API publik loader tetap diekspor dari `cyclegan`; pemetaan path lama tersedia pada README.
@@ -64,7 +64,7 @@ Koreksi atribusi 3 November 2026: arsip `diskusi_claude.md`, tiga JSON berlabel 
 | Mikhael Restu Mahardhika (103012300277) — penanggung jawab pipeline; Jian Hazel Sitorus (103012300187) — bantuan sementara pada tahap awal | [PERLU DILENGKAPI: arsip percakapan implementasi, rincian tahap per anggota, traceback fixture gagal, versi fixture sebelum/sesudah, dan distribusi dataset final] |
 | Reevanza Abel Desta Arifin (103012330104) — pelatihan dan tuning | [PERLU DILENGKAPI: konfigurasi/run ID, kode, log, grafik, checkpoint, keluaran, dan perbaikan eror terkait] |
 | Setiap penyunting Peran 4 | [PERLU DILENGKAPI: nama/NIM, bagian dokumen yang disunting, sumber bukti, hasil pemeriksaan dan peninjau] |
-| Koordinator kelompok | [PERLU DILENGKAPI: identitas akademik, daftar anggota, pemetaan penugasan awal/pelaksanaan/penyuntingan dan catatan pembagian yang benar-benar disepakati] |
+| Koordinator kelompok | [PERLU DILENGKAPI: pemetaan penugasan awal/pelaksanaan/penyuntingan dan catatan pembagian yang benar-benar disepakati] |
 
 Untuk eksperimen, sertakan konfigurasi arsitektur dan manifest/hash aktual, loss dan bobotnya, optimizer/scheduler, seed, device, epoch/step, protokol validasi/test, sumber metrik, checkpoint dan contoh keluaran yang dapat ditelusuri. Jika belum dikerjakan, catat status tersebut; jangan mengisi angka rancangan sebagai hasil run.
 

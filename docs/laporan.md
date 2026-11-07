@@ -10,10 +10,9 @@ Tema tugas: **Vibe Coding Generative AI from Scratch**.
 
 | Identitas | Isian |
 |---|---|
-| Mata kuliah | [PERLU DILENGKAPI: nama mata kuliah] |
-| Program studi / institusi | [PERLU DILENGKAPI: program studi dan institusi] |
-| Kelas / kelompok | [PERLU DILENGKAPI: kelas] / [PERLU DILENGKAPI: nama atau nomor kelompok] |
-| Dosen pengampu | [PERLU DILENGKAPI: nama dosen pengampu] |
+| Mata kuliah | Generative AI |
+| Program studi / institusi | S1 Informatika / Telkom University |
+| Kelas / kelompok | GENERATIVE AI BS1IF-47-GAB03 / Kelompok 2 |
 | Anggota | Jian Hazel Sitorus (103012300187); Mikhael Restu Mahardhika (103012300277); Reevanza Abel Desta Arifin (103012330104) |
 
 Penanggung jawab Peran 1 (Prompt Engineer & LLM Navigator) adalah Jian Hazel Sitorus (103012300187); Peran 2 (Data Pipeline & Preprocessing Engineer) adalah Mikhael Restu Mahardhika (103012300277); dan Peran 3 (Training Loop & Hyperparameter Tuning Engineer) adalah Reevanza Abel Desta Arifin (103012330104). Dokumentasi awal Peran 4 (Lead Documentarian & Error Handler) ditangani Jian Hazel Sitorus, kemudian dikerjakan bersama anggota tim.
@@ -168,7 +167,7 @@ Pembahasan eksperimen: [PERLU DILENGKAPI: konfigurasi, bukti dan hasil aktual da
 
 Rancangan dan implementasi fondasi CycleGAN serta pipeline data telah tersedia dan didukung bukti pengujian teknis. Keberhasilan penerjemahan gambar belum dapat disimpulkan karena bukti pelatihan dan evaluasi kualitas belum tersedia pada workspace yang diperiksa. Aktivitas di luar cakupan tersebut perlu dikonfirmasi tim.
 
-Lampiran valid tersedia: prompt, log interaksi dengan koreksi atribusi, sumber dan ringkasan GPT/ChatGPT, kode, tes, audit, metadata sumber, manifest/preparation report dan hasil pemeriksaan. Arsip atribusi yang belum terverifikasi disimpan terpisah secara status dan bukan dasar kesimpulan. Informasi yang belum tersedia: rincian identitas akademik selain nama/NIM anggota, lokasi distribusi dataset final, kelengkapan tautan atau ekspor sesi lainnya, bukti kontribusi manusia terperinci, refleksi kelompok dan seluruh hasil eksperimen Peran 3.
+Lampiran valid tersedia: prompt, log interaksi dengan koreksi atribusi, sumber dan ringkasan GPT/ChatGPT, kode, tes, audit, metadata sumber, manifest/preparation report dan hasil pemeriksaan. Arsip atribusi yang belum terverifikasi disimpan terpisah secara status dan bukan dasar kesimpulan. Informasi yang belum tersedia: lokasi distribusi dataset final, kelengkapan tautan atau ekspor sesi lainnya, bukti kontribusi manusia terperinci, refleksi kelompok dan seluruh hasil eksperimen Peran 3.
 
 ## 12. Kelengkapan menurut rubrik
 

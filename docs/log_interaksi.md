@@ -2,7 +2,7 @@
 
 > **Status atribusi aktif, 3 November 2026:** proyek menggunakan GPT/ChatGPT berdasarkan klarifikasi tim dan sumber percakapan. Nama/versi model GPT tidak ditetapkan. Klaim Claude/Opus/CLI dan review independen yang belum terverifikasi ditarik dari hasil; bagian terkait di bawah menjadi kutipan arsip. Permintaan alat dalam prompt bukan bukti eksekusi. Rujukan aktif: [diskusi GPT/ChatGPT dan register arsip](diskusi_llm.md).
 
-Kelompok: [BELUM DIBERIKAN]. Identitas/NIM anggota, dilengkapi sesuai laporan Word pada 7 November 2026: Jian Hazel Sitorus (103012300187); Mikhael Restu Mahardhika (103012300277); Reevanza Abel Desta Arifin (103012330104).
+Kelompok: 2. Mata kuliah: Generative AI. Program studi / institusi: S1 Informatika / Telkom University. Kelas: GENERATIVE AI BS1IF-47-GAB03. Identitas/NIM anggota, dilengkapi sesuai laporan Word pada 7 November 2026: Jian Hazel Sitorus (103012300187); Mikhael Restu Mahardhika (103012300277); Reevanza Abel Desta Arifin (103012330104).
 
 Pemetaan identitas terkini: Jian Hazel Sitorus menjalankan Peran 1, Mikhael Restu Mahardhika menjalankan Peran 2, dan Reevanza Abel Desta Arifin menjalankan Peran 3. Bantuan Jian pada prapemrosesan awal bersifat sementara; kelanjutannya kembali kepada Mikhael. Dokumentasi Peran 4 dikerjakan bersama. Penyebutan pengambilalihan pada catatan historis di bawah dibaca bersama klarifikasi ini; kutipan prompt dan bukti asli tetap menjadi rekaman sesi saat itu.
 

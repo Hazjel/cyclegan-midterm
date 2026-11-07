@@ -4,10 +4,9 @@ Proyek tugas kelompok mata kuliah dengan tema **Vibe Coding Generative AI from S
 
 | Identitas akademik | Keterangan |
 |---|---|
-| Mata kuliah | [PERLU DILENGKAPI: nama mata kuliah] |
-| Program studi / institusi | [PERLU DILENGKAPI: program studi dan institusi] |
-| Kelas / kelompok | [PERLU DILENGKAPI: kelas] / [PERLU DILENGKAPI: nama atau nomor kelompok] |
-| Dosen pengampu | [PERLU DILENGKAPI: nama dosen pengampu] |
+| Mata kuliah | Generative AI |
+| Program studi / institusi | S1 Informatika / Telkom University |
+| Kelas / kelompok | GENERATIVE AI BS1IF-47-GAB03 / Kelompok 2 |
 | Anggota | Jian Hazel Sitorus (103012300187); Mikhael Restu Mahardhika (103012300277); Reevanza Abel Desta Arifin (103012330104) |
 
 ## Tujuan dan metode
@@ -169,7 +168,7 @@ Nama dan NIM penanggung jawab Peran 1–3 diselaraskan dengan laporan Word pada 
 
 Skrip training, validasi, checkpoint/resume dan evaluasi dari commit `5fe225b` dipertahankan pada integrasi 3 November 2026. Log run, checkpoint, grafik dan keluaran training belum tersedia sebagai bukti hasil. Kapasitas memori, tuning dan kualitas terjemahan belum diverifikasi. Inventaris terdahulu mencatat RTX 3060 Laptop 6 GiB; panduan anggota lain menyebut target RTX 4050 Laptop 6 GB, yang belum diperiksa pada sesi integrasi. Jangan memakai test untuk memilih hyperparameter atau checkpoint. [PERLU DILENGKAPI: konfigurasi run aktual dan bukti hasil dari Peran 3].
 
-Test merupakan subset yang telah melalui penyaringan blur, bukan benchmark Kaggle penuh. Pemeriksaan piksel identik belum menjamin tidak ada gambar mirip atau crop berbeda. Tanpa ZIP preprocessing asli, audit dan persiapan ulang terhadap arsip tersebut tidak dapat diulang sepenuhnya. Identitas akademik, distribusi dataset final, bukti kontribusi anggota, ekspor chat lengkap, dan refleksi kelompok masih perlu dilengkapi.
+Test merupakan subset yang telah melalui penyaringan blur, bukan benchmark Kaggle penuh. Pemeriksaan piksel identik belum menjamin tidak ada gambar mirip atau crop berbeda. Tanpa ZIP preprocessing asli, audit dan persiapan ulang terhadap arsip tersebut tidak dapat diulang sepenuhnya. Distribusi dataset final, bukti kontribusi anggota, ekspor chat lengkap, dan refleksi kelompok masih perlu dilengkapi.
 
 ## Referensi dan dokumentasi pendukung
 
