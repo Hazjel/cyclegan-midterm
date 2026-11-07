@@ -1,6 +1,6 @@
 # Koordinasi Dokumentasi Kelompok — Peran 4
 
-**Pembaruan integrasi 3 November 2026:** skrip training/evaluasi kini tersedia dari commit remote anggota lain `5fe225b`; lihat [panduan training](training_lokal.md). Inventaris 31 Oktober di bawah tetap mencatat keadaan lokal sebelum fetch tersebut. DOK-03 kini perlu mengumpulkan bukti eksekusi dan hasil dari skrip yang tersedia, bukan menganggap implementasinya belum ada. Identitas penanggung jawab peran/penyunting tetap perlu dikonfirmasi tim.
+**Pembaruan integrasi 3 November 2026:** skrip training/evaluasi kini tersedia dari commit remote anggota lain `5fe225b`; lihat [panduan training](training_lokal.md). Inventaris 31 Oktober di bawah tetap mencatat keadaan lokal sebelum fetch tersebut. DOK-03 kini perlu mengumpulkan bukti eksekusi dan hasil dari skrip yang tersedia. Identitas penanggung jawab Peran 1–3 dilengkapi dari laporan Word pada 7 November 2026; rincian penyuntingan setiap anggota tetap perlu dicatat.
 
 Status: **draf kompilasi berbasis bukti, 31 Oktober 2026; bukan laporan final**.
 Nama kelompok: [PERLU DILENGKAPI: nama atau nomor kelompok].
@@ -10,14 +10,14 @@ Catatan struktur 3 November 2026: path kode aktif di bawah mengikuti pemindahan 
 
 ## 1. Penugasan, pelaksanaan dan penyuntingan
 
-Pembagian awal terdiri atas Peran 1 (prompt/arsitektur/integrasi), Peran 2 (pipeline data), Peran 3 (pelatihan/tuning), dan Peran 4 (dokumentasi/debugging). Klarifikasi terdahulu menyatakan pelaksana Peran 1 dan 4 mengambil alih pengerjaan teknis Peran 2. Klarifikasi terbaru menyatakan **Peran 4 dikerjakan bersama beberapa anggota**. Kedua catatan tersebut dipertahankan; pelaksanaan teknis suatu modul tidak otomatis sama dengan penyunting dokumentasinya.
+Penanggung jawab Peran 1 (prompt, arsitektur, dan integrasi) adalah Jian Hazel Sitorus (103012300187); Peran 2 (pipeline data) adalah Mikhael Restu Mahardhika (103012300277); dan Peran 3 (pelatihan dan tuning) adalah Reevanza Abel Desta Arifin (103012330104). Jian Hazel Sitorus membantu prapemrosesan awal untuk sementara, kemudian Mikhael Restu Mahardhika melanjutkan tanggung jawab Peran 2. Dokumentasi awal Peran 4 ditangani Jian Hazel Sitorus dan kelanjutannya dikerjakan bersama anggota tim. Penanggung jawab modul dan penyunting dokumentasi dicatat sesuai pekerjaan aktual.
 
 | Jenis atribusi | Yang diketahui | Kekurangan bukti |
 |---|---|---|
-| Penanggung jawab awal | Empat lingkup peran dalam panduan dan pembagian tugas | [PERLU DILENGKAPI: nama/NIM penanggung jawab awal setiap peran] |
-| Pelaksana teknis aktual | Pelaksana Peran 1/4 melaporkan pengambilalihan teknis Peran 2 | [PERLU DILENGKAPI: identitas, rincian pekerjaan, dan log kerja pendukung] |
+| Penanggung jawab awal | Peran 1: Jian Hazel Sitorus (103012300187); Peran 2: Mikhael Restu Mahardhika (103012300277); Peran 3: Reevanza Abel Desta Arifin (103012330104) | Rincian pembagian dokumentasi Peran 4 per anggota |
+| Pelaksana teknis aktual | Jian Hazel Sitorus menangani fondasi dan membantu prapemrosesan awal untuk sementara; kelanjutan prapemrosesan menjadi tanggung jawab Mikhael Restu Mahardhika; pelatihan menjadi tanggung jawab Reevanza Abel Desta Arifin | [PERLU DILENGKAPI: rincian pekerjaan, tanggal, dan log pendukung setiap tahap] |
 | Penyunting dokumentasi | Peran 4 dikerjakan bersama; kompilasi sesi ini dibantu LLM | [PERLU DILENGKAPI: identitas penyunting, berkas/bagian, tanggal dan hasil pemeriksaan setiap anggota] |
-| Pelaksanaan training | Tidak ditemukan implementasi atau artefak training pada cakupan berkas yang diperiksa | [PERLU DILENGKAPI: konfirmasi Peran 3 dan bukti pekerjaan di luar workspace jika ada] |
+| Pelaksanaan training | Reevanza Abel Desta Arifin bertanggung jawab pada Peran 3; inventaris historis di bawah mencatat keadaan berkas saat diperiksa | [PERLU DILENGKAPI: bukti run, konfigurasi, metrik, checkpoint, dan keluaran eksperimen] |
 
 Tidak ada nama anggota, persetujuan pembagian baru, commit kontribusi, atau refleksi pribadi yang ditambahkan tanpa sumber. Laporan kerja dapat berupa catatan anggota dan bukti perubahan yang nyata; tidak perlu membuat commit bertanggal surut.
 
@@ -60,9 +60,9 @@ Koreksi atribusi 3 November 2026: arsip `diskusi_claude.md`, tiga JSON berlabel 
 
 | Sumber tim | Bahan yang perlu diserahkan |
 |---|---|
-| Pelaksana arsitektur/integrasi | [PERLU DILENGKAPI: nama/NIM, ekspor lengkap sesi rancangan, keputusan yang disetujui anggota, dan catatan alasan/penjelasan pribadi] |
-| Pelaksana pipeline aktual | [PERLU DILENGKAPI: nama/NIM, arsip percakapan implementasi, traceback fixture gagal, versi fixture sebelum/sesudah, dan distribusi dataset final] |
-| Penanggung jawab Peran 3 | [PERLU DILENGKAPI: nama/NIM, status pekerjaan aktual, konfigurasi/run ID, kode/log/grafik/checkpoint/keluaran dan perbaikan eror jika sudah ada di luar workspace] |
+| Jian Hazel Sitorus (103012300187) — arsitektur dan integrasi | [PERLU DILENGKAPI: ekspor lengkap sesi rancangan, keputusan yang disetujui anggota, dan catatan alasan/penjelasan pribadi] |
+| Mikhael Restu Mahardhika (103012300277) — penanggung jawab pipeline; Jian Hazel Sitorus (103012300187) — bantuan sementara pada tahap awal | [PERLU DILENGKAPI: arsip percakapan implementasi, rincian tahap per anggota, traceback fixture gagal, versi fixture sebelum/sesudah, dan distribusi dataset final] |
+| Reevanza Abel Desta Arifin (103012330104) — pelatihan dan tuning | [PERLU DILENGKAPI: konfigurasi/run ID, kode, log, grafik, checkpoint, keluaran, dan perbaikan eror terkait] |
 | Setiap penyunting Peran 4 | [PERLU DILENGKAPI: nama/NIM, bagian dokumen yang disunting, sumber bukti, hasil pemeriksaan dan peninjau] |
 | Koordinator kelompok | [PERLU DILENGKAPI: identitas akademik, daftar anggota, pemetaan penugasan awal/pelaksanaan/penyuntingan dan catatan pembagian yang benar-benar disepakati] |
 

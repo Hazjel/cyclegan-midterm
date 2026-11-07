@@ -2,7 +2,10 @@
 
 > **Status atribusi aktif, 3 November 2026:** proyek menggunakan GPT/ChatGPT berdasarkan klarifikasi tim dan sumber percakapan. Nama/versi model GPT tidak ditetapkan. Klaim Claude/Opus/CLI dan review independen yang belum terverifikasi ditarik dari hasil; bagian terkait di bawah menjadi kutipan arsip. Permintaan alat dalam prompt bukan bukti eksekusi. Rujukan aktif: [diskusi GPT/ChatGPT dan register arsip](diskusi_llm.md).
 
-Kelompok: [BELUM DIBERIKAN]. Identitas/NIM: [BELUM DIBERIKAN].
+Kelompok: [BELUM DIBERIKAN]. Identitas/NIM anggota, dilengkapi sesuai laporan Word pada 7 November 2026: Jian Hazel Sitorus (103012300187); Mikhael Restu Mahardhika (103012300277); Reevanza Abel Desta Arifin (103012330104).
+
+Pemetaan identitas terkini: Jian Hazel Sitorus menjalankan Peran 1, Mikhael Restu Mahardhika menjalankan Peran 2, dan Reevanza Abel Desta Arifin menjalankan Peran 3. Bantuan Jian pada prapemrosesan awal bersifat sementara; kelanjutannya kembali kepada Mikhael. Dokumentasi Peran 4 dikerjakan bersama. Penyebutan pengambilalihan pada catatan historis di bawah dibaca bersama klarifikasi ini; kutipan prompt dan bukti asli tetap menjadi rekaman sesi saat itu.
+
 Tanggal sesi: **27 Oktober 2026, Asia/Jakarta**, berdasarkan konteks sesi dan timestamp bukti pemeriksaan. Tidak ada tanggal sesi sebelumnya yang diasumsikan.
 Target sesi awal: fondasi model dan dokumentasi dalam lingkup Peran 1 dan 4.
 Tautan share chat: [Bangun fondasi codebase CycleGAN](https://chatgpt.com/s/cx_6ae56f2a66c4819196c604c1f9cd4f05), diberikan dan berhasil dibuka pada 31 Oktober 2026. Cakupan yang terlihat: fondasi model, penyesuaian penggunaan dataset final, dan penyuntingan dokumentasi akademik. Ekspor percakapan lengkap serta tautan sesi lainnya: [BELUM DILAMPIRKAN].
@@ -297,7 +300,7 @@ Peran 4 saat ini dikerjakan bersama beberapa anggota. Nama kelompok, daftar peny
 
 #### LOG-01 — Fondasi model, 27 Oktober 2026
 
-- **Anggota/target:** lingkup Peran 1 dan 4, arsitektur dan integrasi; [PERLU DILENGKAPI: nama/NIM peserta].
+- **Anggota/target:** Jian Hazel Sitorus (103012300187); fondasi Peran 1 dan dokumentasi awal Peran 4, arsitektur, serta integrasi.
 - **Chat/ekspor:** tautan fondasi pada bagian 10; [PERLU DILENGKAPI: ekspor lengkap respons dan tool yang tidak tampil di halaman berbagi].
 - **Prompt asli:** [salinan tugas](bukti/prompt_pengguna.md); cuplikan tetap pada bagian 1–3.
 - **Alasan pendekatan:** fondasi diuji dengan tensor dummy tanpa menunggu pipeline/training; dua kelas dipakai untuk empat instance independen.
@@ -310,7 +313,7 @@ Peran 4 saat ini dikerjakan bersama beberapa anggota. Nama kelompok, daftar peny
 
 #### LOG-02 — Implementasi lingkup pipeline data, 27 Oktober 2026
 
-- **Anggota/target:** lingkup Peran 2; kontribusi teknis dilaporkan diambil alih pelaksana Peran 1/4. [PERLU DILENGKAPI: identitas pelaksana dan penyunting].
+- **Anggota/target:** Jian Hazel Sitorus (103012300187) membantu sementara pada lingkup Peran 2; kelanjutannya menjadi tanggung jawab Mikhael Restu Mahardhika (103012300277). [PERLU DILENGKAPI: rincian tahap dan penyunting per anggota].
 - **Chat/ekspor:** [prompt tahap pipeline](bukti/prompt_orang2.md) tersedia. [PERLU DILENGKAPI: tautan/ekspor GPT/ChatGPT keseluruhan sesi implementasi]. Arsip atribusi lama tercatat terpisah pada [register diskusi LLM](diskusi_llm.md), bukan bukti eksekusi alat atau respons GPT.
 - **Prompt asli:** berkas prompt tersebut, bukan prompt hasil rekonstruksi.
 - **Alasan pendekatan:** rekonsiliasi metadata/sumber, RGB dan pemisahan data dilakukan sebelum loader; sampling unpaired dan kontrak tensor diselaraskan.
@@ -323,7 +326,7 @@ Peran 4 saat ini dikerjakan bersama beberapa anggota. Nama kelompok, daftar peny
 
 #### LOG-03 — Penggunaan folder final tanpa ZIP, 27 Oktober 2026
 
-- **Anggota/target:** integrasi dan dokumentasi penggunaan; [PERLU DILENGKAPI: nama/NIM peserta/penyunting].
+- **Anggota/target:** Jian Hazel Sitorus (103012300187); integrasi dan dokumentasi penggunaan folder dataset final.
 - **Chat/ekspor:** tautan pada bagian 10 mencakup rangkaian ini; [PERLU DILENGKAPI: ekspor asli lengkap].
 - **Prompt asli:** cuplikan pada bagian 8 dan rangkaian penyesuaian yang dicatat pada tautan; tidak diubah menjadi prompt pipeline dari awal.
 - **Alasan pendekatan:** loader telah membaca folder final, sehingga perubahan cukup pada petunjuk aktif dan deskripsi utilitas ZIP.
@@ -336,7 +339,7 @@ Peran 4 saat ini dikerjakan bersama beberapa anggota. Nama kelompok, daftar peny
 
 #### LOG-04 — Penyuntingan akademik, 28 Oktober 2026
 
-- **Anggota/target:** narasi proyek akademik dan atribusi kontribusi; [PERLU DILENGKAPI: nama/NIM penyunting].
+- **Anggota/target:** Jian Hazel Sitorus (103012300187); narasi proyek akademik dan atribusi kontribusi.
 - **Chat/ekspor:** rangkaian penyuntingan tercatat pada tautan bagian 10; [PERLU DILENGKAPI: ekspor percakapan lengkap].
 - **Prompt asli:** permintaan penyuntingan terdapat pada rangkaian tautan menurut catatan bagian 10; salinan Markdown lokal belum ada. Tidak direka ulang.
 - **Alasan pendekatan:** bedakan penugasan awal, pelaksanaan teknis aktual dan penyuntingan; ringkas README dan susun laporan akademik.

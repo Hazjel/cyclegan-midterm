@@ -4,7 +4,7 @@
 
 ## Lingkup dan atribusi kontribusi
 
-Peran 2 pada pembagian awal mencakup penyiapan dataset, preprocessing, augmentasi, normalisasi, dan DataLoader. **Pengerjaan teknis lingkup ini diambil alih oleh pelaksana Peran 1 dan 4**, sesuai klarifikasi kontribusi aktual. Nama dan NIM pelaksana: [PERLU DILENGKAPI: nama/NIM pelaksana teknis Peran 2]. Penanggung jawab awal Peran 2: [PERLU DILENGKAPI: nama/NIM penanggung jawab awal].
+Penanggung jawab Peran 2 adalah **Mikhael Restu Mahardhika (103012300277)**, dengan lingkup penyiapan dataset, preprocessing, augmentasi, normalisasi, dan DataLoader. Jian Hazel Sitorus (103012300187) membantu prapemrosesan awal untuk sementara, kemudian kelanjutannya kembali menjadi tanggung jawab Mikhael Restu Mahardhika. Penamaan dan penjelasan kontribusi ini mengikuti laporan Word serta klarifikasi tim, diperbarui 7 November 2026. Rincian tahap yang dikerjakan setiap anggota, termasuk prapemrosesan versi kedua, mengikuti bukti pekerjaan aktual.
 
 Nama berkas ini dipertahankan untuk kesinambungan tautan dan log. Sebutan “orang 2” pada arsip menunjukkan lingkup tugas; implementasi tidak diatribusikan kepada anggota tertentu hanya berdasarkan label tersebut. Kontribusi manusia lain yang belum dilaporkan tidak diasumsikan. Rincian penugasan awal terdapat dalam [README](../README.md). Peran 4 kini dikerjakan bersama beberapa anggota; [PERLU DILENGKAPI: nama/NIM pengumpul bukti pipeline, penyunting dan peninjau]. Pembagian paket kerja dan kekurangan bukti dicatat dalam [koordinasi dokumentasi](koordinasi_dokumentasi.md), terpisah dari atribusi pelaksana kode.
 
@@ -45,13 +45,13 @@ Pada tahap persiapan, 2.661 gambar asli dibandingkan byte demi byte dengan arsip
 
 Penghapusan `preproc.zip` dilaporkan pelaksana proyek dan ketidakberadaannya dikonfirmasi pada sesi 27 Oktober 2026. Catatan ini terpisah dari riwayat persiapan sebelumnya. Loader dan `preprocessing/check_data.py` tetap menggunakan folder final tanpa ZIP. `preprocessing/prepare_data.py` dan `preprocessing/audit_archive.py` adalah utilitas opsional berbasis arsip; reproduksi penuh terhadap preprocessing sumber memerlukan ZIP asli yang kini tidak tersedia.
 
-## Integrasi ke Peran 3
+## Integrasi dengan Reevanza Abel Desta Arifin pada Peran 3
 
 Gunakan `create_dataloaders("data/horse2zebra")` sesuai [README](../README.md) dan [kontrak v1.1](kontrak_integrasi.md). Batch train berupa dictionary A/B, masing-masing float32 `[N,3,256,256]` dalam [-1,1]. Transformasi domain dilakukan independen dan tidak menghasilkan berkas augmentasi offline.
 
 Loader testA/testB menghasilkan tensor domain tunggal. Keduanya diiterasi terpisah tanpa `zip` atau pengulangan agar seluruh 118 kuda dan 139 zebra tercakup. Untuk `num_workers=0`, seed torch ditetapkan sebelum iterasi; worker Windows memerlukan main guard.
 
-Peran 3 perlu menyimpan manifest/hash, konfigurasi transform, seed dan state RNG bersama checkpoint, serta mengambil validasi dari train sebelum tuning atau pemilihan checkpoint. Pipeline siap diintegrasikan. Pada pemeriksaan berkas 31 Oktober 2026 belum ditemukan implementasi/artefak training, checkpoint atau evaluasi kualitas; [PERLU DILENGKAPI: konfirmasi Peran 3 dan bukti run bila dikerjakan di luar workspace].
+Reevanza Abel Desta Arifin (103012330104), sebagai penanggung jawab Peran 3, perlu menyimpan manifest/hash, konfigurasi transform, seed dan state RNG bersama checkpoint, serta mengambil validasi dari train sebelum tuning atau pemilihan checkpoint. Pipeline siap diintegrasikan. Pada pemeriksaan berkas 31 Oktober 2026 belum ditemukan implementasi/artefak training, checkpoint atau evaluasi kualitas; [PERLU DILENGKAPI: bukti run yang dikerjakan di luar workspace].
 
 ## Bukti verifikasi
 

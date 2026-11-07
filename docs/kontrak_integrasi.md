@@ -6,6 +6,16 @@ Root dataset aktif adalah **`data/horse2zebra`**. Dataset dibagikan terpisah dan
 
 ## Penamaan dan kepemilikan
 
+Penanggung jawab sesuai laporan Word, diperbarui 7 November 2026:
+
+| Peran | Penanggung jawab | NIM |
+|---|---|---|
+| 1 — Arsitektur dan integrasi | Jian Hazel Sitorus | 103012300187 |
+| 2 — Pipeline data dan preprocessing | Mikhael Restu Mahardhika | 103012300277 |
+| 3 — Pelatihan dan tuning | Reevanza Abel Desta Arifin | 103012330104 |
+
+Jian Hazel Sitorus membantu prapemrosesan awal untuk sementara; kelanjutannya menjadi tanggung jawab Mikhael Restu Mahardhika. Dokumentasi Peran 4 dikerjakan bersama anggota tim.
+
 | Simbol | Makna |
 |---|---|
 | A | kuda |

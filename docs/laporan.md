@@ -14,11 +14,11 @@ Tema tugas: **Vibe Coding Generative AI from Scratch**.
 | Program studi / institusi | [PERLU DILENGKAPI: program studi dan institusi] |
 | Kelas / kelompok | [PERLU DILENGKAPI: kelas] / [PERLU DILENGKAPI: nama atau nomor kelompok] |
 | Dosen pengampu | [PERLU DILENGKAPI: nama dosen pengampu] |
-| Anggota | [PERLU DILENGKAPI: nama dan NIM setiap anggota] |
+| Anggota | Jian Hazel Sitorus (103012300187); Mikhael Restu Mahardhika (103012300277); Reevanza Abel Desta Arifin (103012330104) |
 
-Pembagian awal terdiri atas Peran 1 (Prompt Engineer & LLM Navigator), Peran 2 (Data Pipeline & Preprocessing Engineer), Peran 3 (Training Loop & Hyperparameter Tuning Engineer), dan Peran 4 (Lead Documentarian & Error Handler).
+Penanggung jawab Peran 1 (Prompt Engineer & LLM Navigator) adalah Jian Hazel Sitorus (103012300187); Peran 2 (Data Pipeline & Preprocessing Engineer) adalah Mikhael Restu Mahardhika (103012300277); dan Peran 3 (Training Loop & Hyperparameter Tuning Engineer) adalah Reevanza Abel Desta Arifin (103012330104). Dokumentasi awal Peran 4 (Lead Documentarian & Error Handler) ditangani Jian Hazel Sitorus, kemudian dikerjakan bersama anggota tim.
 
-Kontribusi aktual yang diklarifikasi: pelaksana Peran 1 dan 4 juga mengambil alih pengerjaan teknis Peran 2 dengan bantuan LLM. Nama/NIM pelaksana: [PERLU DILENGKAPI: identitas yang belum diisi]. Penanggung jawab awal Peran 2 dan penanggung jawab Peran 3: [PERLU DILENGKAPI: identitas yang belum diisi]. Implementasi/artefak training Peran 3 belum ditemukan pada cakupan pemeriksaan berkas. Sebutan “orang 2” dalam nama berkas dan arsip menunjukkan lingkup tugas, bukan identitas pembuat implementasi. Klarifikasi terbaru menyatakan Peran 4 dikerjakan bersama beberapa anggota; [PERLU DILENGKAPI: nama/NIM penyunting, bagian, tanggal dan hasil pemeriksaan masing-masing]. Kontribusi anggota lain, pembagian waktu, persetujuan kelompok, dan refleksi pribadi yang belum diberikan tidak diasumsikan. [Koordinasi dokumentasi](koordinasi_dokumentasi.md) memisahkan penanggung jawab awal, pelaksana aktual dan penyunting serta mengusulkan paket percakapan/arsitektur, bukti pipeline, eksperimen, dan penggabungan laporan; belum merupakan pembagian bernama yang disetujui tim.
+Jian Hazel Sitorus membantu prapemrosesan awal untuk sementara, lalu kelanjutannya kembali menjadi tanggung jawab Mikhael Restu Mahardhika. Reevanza Abel Desta Arifin menangani pelatihan model dan penyetelan hiperparameter. Identitas dan penjelasan bantuan sementara ini diselaraskan dengan laporan Word pada 7 November 2026. Nama peran dalam arsip menunjukkan lingkup tugas; rincian kontribusi teknis, bukti eksperimen, dan penyuntingan setiap anggota tetap perlu ditelusuri melalui bukti aktual. [Koordinasi dokumentasi](koordinasi_dokumentasi.md) mencatat kebutuhan bukti serta pembagian dokumentasi bersama. [PERLU DILENGKAPI: bagian, tanggal, sumber bukti, dan peninjau untuk setiap penyunting Peran 4].
 
 ## 2. Pendahuluan dan tujuan
 
@@ -168,7 +168,7 @@ Pembahasan eksperimen: [PERLU DILENGKAPI: konfigurasi, bukti dan hasil aktual da
 
 Rancangan dan implementasi fondasi CycleGAN serta pipeline data telah tersedia dan didukung bukti pengujian teknis. Keberhasilan penerjemahan gambar belum dapat disimpulkan karena bukti pelatihan dan evaluasi kualitas belum tersedia pada workspace yang diperiksa. Aktivitas di luar cakupan tersebut perlu dikonfirmasi tim.
 
-Lampiran valid tersedia: prompt, log interaksi dengan koreksi atribusi, sumber dan ringkasan GPT/ChatGPT, kode, tes, audit, metadata sumber, manifest/preparation report dan hasil pemeriksaan. Arsip atribusi yang belum terverifikasi disimpan terpisah secara status dan bukan dasar kesimpulan. Informasi yang belum tersedia: identitas akademik/anggota, lokasi distribusi dataset final, kelengkapan tautan atau ekspor sesi lainnya, bukti kontribusi manusia terperinci, refleksi kelompok dan seluruh hasil eksperimen Peran 3.
+Lampiran valid tersedia: prompt, log interaksi dengan koreksi atribusi, sumber dan ringkasan GPT/ChatGPT, kode, tes, audit, metadata sumber, manifest/preparation report dan hasil pemeriksaan. Arsip atribusi yang belum terverifikasi disimpan terpisah secara status dan bukan dasar kesimpulan. Informasi yang belum tersedia: rincian identitas akademik selain nama/NIM anggota, lokasi distribusi dataset final, kelengkapan tautan atau ekspor sesi lainnya, bukti kontribusi manusia terperinci, refleksi kelompok dan seluruh hasil eksperimen Peran 3.
 
 ## 12. Kelengkapan menurut rubrik
 

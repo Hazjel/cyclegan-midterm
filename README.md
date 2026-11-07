@@ -8,7 +8,7 @@ Proyek tugas kelompok mata kuliah dengan tema **Vibe Coding Generative AI from S
 | Program studi / institusi | [PERLU DILENGKAPI: program studi dan institusi] |
 | Kelas / kelompok | [PERLU DILENGKAPI: kelas] / [PERLU DILENGKAPI: nama atau nomor kelompok] |
 | Dosen pengampu | [PERLU DILENGKAPI: nama dosen pengampu] |
-| Anggota | [PERLU DILENGKAPI: nama dan NIM setiap anggota] |
+| Anggota | Jian Hazel Sitorus (103012300187); Mikhael Restu Mahardhika (103012300277); Reevanza Abel Desta Arifin (103012330104) |
 
 ## Tujuan dan metode
 
@@ -158,12 +158,12 @@ Verifikasi penataan 3 November 2026 mengulang seluruh 21 tes, termasuk worker Wi
 
 | Peran awal | Tanggung jawab | Penanggung jawab awal | Kontribusi aktual yang dilaporkan |
 |---|---|---|---|
-| 1 — Prompt Engineer & LLM Navigator | Rancangan, prompt, konsistensi kode, integrasi | [PERLU DILENGKAPI: nama/NIM pelaksana Peran 1 dan 4] | Menangani fondasi model dan koordinasi teknis dengan bantuan LLM |
-| 2 — Data Pipeline & Preprocessing Engineer | Dataset, preprocessing, augmentasi, normalisasi, DataLoader | [PERLU DILENGKAPI: nama/NIM penanggung jawab awal Peran 2] | Pengerjaan teknis diambil alih oleh pelaksana Peran 1 dan 4 |
-| 3 — Training Loop & Hyperparameter Tuning Engineer | Loss, optimizer, training, tuning, checkpoint, metrik | [PERLU DILENGKAPI: nama/NIM penanggung jawab Peran 3] | Skrip tersedia dari commit remote `5fe225b`; hasil training belum dapat diverifikasi |
-| 4 — Lead Documentarian & Error Handler | Log interaksi, debugging, laporan | Pelaksana Peran 1/4 pada penugasan yang dilaporkan terdahulu | Kini dikerjakan bersama beberapa anggota; [PERLU DILENGKAPI: nama/NIM penyunting dan bagian yang dikerjakan] |
+| 1 — Prompt Engineer & LLM Navigator | Rancangan, prompt, konsistensi kode, integrasi | Jian Hazel Sitorus (103012300187) | Menangani fondasi model dan koordinasi teknis; membantu prapemrosesan awal untuk sementara |
+| 2 — Data Pipeline & Preprocessing Engineer | Dataset, preprocessing, augmentasi, normalisasi, DataLoader | Mikhael Restu Mahardhika (103012300277) | Bertanggung jawab melanjutkan prapemrosesan setelah bantuan sementara dari Jian Hazel Sitorus; rincian implementasi mengikuti bukti pekerjaan |
+| 3 — Training Loop & Hyperparameter Tuning Engineer | Loss, optimizer, training, tuning, checkpoint, metrik | Reevanza Abel Desta Arifin (103012330104) | Menangani pelatihan dan penyetelan hiperparameter; skrip tersedia dari commit remote `5fe225b`, sedangkan artefak hasil run perlu dilengkapi |
+| 4 — Lead Documentarian & Error Handler | Log interaksi, debugging, laporan | Dokumentasi awal: Jian Hazel Sitorus (103012300187); kelanjutan bersama anggota tim | [PERLU DILENGKAPI: nama penyunting dan bagian yang dikerjakan masing-masing] |
 
-Pemetaan kontribusi ini mengikuti klarifikasi pelaksana proyek. Nama berkas `status_orang2.md` dan label “orang 2” pada bukti lama menunjukkan lingkup peran, bukan bukti bahwa anggota yang semula ditugaskan pada Peran 2 menulis implementasinya. Kontribusi anggota lain yang belum dilaporkan tidak diasumsikan. Klarifikasi terbaru menempatkan Peran 4 sebagai pekerjaan kolaboratif beberapa anggota. Pemilik peran awal, pelaksana teknis, dan penyunting dibedakan dalam [koordinasi dokumentasi](docs/koordinasi_dokumentasi.md); empat paket kerja di sana masih usulan sampai tim mengisi pelaksana/peninjau. [Register debugging](docs/debugging.md) melengkapi log asli.
+Nama dan NIM penanggung jawab Peran 1–3 diselaraskan dengan laporan Word pada 7 November 2026. Bantuan Jian Hazel Sitorus pada prapemrosesan awal bersifat sementara; kelanjutannya menjadi tanggung jawab Mikhael Restu Mahardhika. Dokumentasi Peran 4 dikerjakan bersama anggota tim. Nama berkas `status_orang2.md` dan label “orang 2” dalam bukti lama menunjukkan lingkup tugas. Rincian pelaksana setiap implementasi dan penyuntingan mengikuti bukti aktual dalam [koordinasi dokumentasi](docs/koordinasi_dokumentasi.md) dan [register debugging](docs/debugging.md).
 
 ## Keterbatasan dan pekerjaan berikutnya
 
