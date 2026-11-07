@@ -31,9 +31,11 @@ from cyclegan import ArchitectureConfig, Generator, PatchDiscriminator, create_d
 
 def parser():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--dataset-root", type=Path, default=REPO_ROOT.parent / "data" / "horse2zebra")
+    p.add_argument("--dataset-root", type=Path, default=REPO_ROOT.parent / "data_cleaned_v2")
     p.add_argument("--output-root", type=Path, default=REPO_ROOT / "runs")
     p.add_argument("--epochs", type=int, default=100)
+    p.add_argument("--patience", type=int, default=10)
+    p.add_argument("--min-delta", type=float, default=1e-4)
     p.add_argument("--batch-size", type=int, default=1)
     p.add_argument("--lr", type=float, default=2e-4)
     p.add_argument("--lr-decay-start", type=int, default=None,
@@ -53,7 +55,7 @@ def parser():
     p.add_argument("--checkpoint-every", type=int, default=1)
     p.add_argument("--limit-train-batches", type=int, default=None,
                    help="explicitly opt-in debugging cap; not a full epoch")
-    p.add_argument("--log-every-batches", type=int, default=100,
+    p.add_argument("--log-every-batches", type=int, default=10,
                    help="print training progress every N batches; 0 disables batch progress")
     p.add_argument("--skip-test", action="store_true",
                    help="skip testA/testB evaluation for hyperparameter-tuning runs")
@@ -73,7 +75,11 @@ def seed_everything(seed):
 
 def choose_device(requested):
     if requested == "auto":
-        requested = "cuda" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            requested = "cuda"
+        else:
+            print(f"CUDA unavailable to PyTorch (compiled CUDA={torch.version.cuda}); falling back to CPU.", flush=True)
+            requested = "cpu"
     device = torch.device(requested)
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA diminta tetapi PyTorch tidak mendeteksi CUDA. Gunakan --device cpu atau periksa instalasi CUDA.")
@@ -316,6 +322,7 @@ def save_checkpoint(path, config, models, opts, epoch, step, best, args, rng, ma
                     "optimizer":{"type":"Adam", "lr":args.lr,"betas":[args.beta1,args.beta2]},
                     "scheduler":scheduler_config(args), "batch_size":args.batch_size,
                     "validation_fraction":args.val_fraction, "num_workers":args.num_workers,
+                    "patience":args.patience, "min_delta":args.min_delta,
                     "epochs_target":args.epochs},
                 "scheduler_state_dict": None if args.lr_decay_start is None else {
                     "last_epoch": epoch, "last_lr": opts["G"].param_groups[0]["lr"]},
@@ -327,7 +334,7 @@ def save_checkpoint(path, config, models, opts, epoch, step, best, args, rng, ma
 
 def main(argv=None):
     args = parser().parse_args(argv)
-    if (args.epochs < 1 or args.batch_size < 1 or args.num_workers < 0 or
+    if (args.epochs < 1 or args.batch_size < 1 or args.num_workers < 0 or args.patience < 1 or args.min_delta < 0 or
             args.checkpoint_every < 1 or args.log_every_batches < 0 or
             args.validation_preview_every < 0):
         raise SystemExit("epochs, batch-size and checkpoint-every must be positive; worker/log/preview counts must be nonnegative")
@@ -341,11 +348,17 @@ def main(argv=None):
         if args.lr_decay_end != args.epochs:
             raise SystemExit("for reproducible resume, --lr-decay-end must equal --epochs")
     root = args.dataset_root.resolve()
-    if not (root / "manifest.json").is_file():
-        raise FileNotFoundError(f"Dataset manifest not found at {root / 'manifest.json'}. Check --dataset-root.")
-    manifest_hash = sha256(root / "manifest.json")
+    if not root.is_dir():
+        raise FileNotFoundError(f"Dataset folder not found: {root}. Expected E:\\midterm\\data_cleaned_v2 or --dataset-root.")
+    for split_name in ("trainA", "trainB", "testA", "testB"):
+        split_dir = root / split_name
+        if not split_dir.is_dir() or not any(split_dir.iterdir()):
+            raise FileNotFoundError(f"Required dataset split folder is missing or empty: {split_dir}")
+    manifest_hash = sha256(root / "manifest.json") if (root / "manifest.json").is_file() else hashlib.sha256(
+        "\n".join(f"{s}/{p.name}" for s in ("trainA", "trainB", "testA", "testB") for p in sorted((root/s).iterdir()) if p.is_file()).encode("utf-8")).hexdigest()
     seed_everything(args.seed)
     device = choose_device(args.device)
+    print(f"Selected device: {device}" + (f" ({torch.cuda.get_device_name(device)})" if device.type == "cuda" else ""), flush=True)
     loaders = create_dataloaders(root, batch_size=args.batch_size, num_workers=args.num_workers, seed=args.seed)
     train_loader, val_loader = split_train(loaders, args.val_fraction, args.seed, args.num_workers)
     fixed_val_samples = [val_loader.dataset[i] for i in range(min(4, len(val_loader.dataset)))]
@@ -354,7 +367,7 @@ def main(argv=None):
     models = [m.to(device) for m in models]
     opts = {"G":torch.optim.Adam(list(models[0].parameters())+list(models[1].parameters()), lr=args.lr, betas=(args.beta1,args.beta2)),
             "D":torch.optim.Adam(list(models[2].parameters())+list(models[3].parameters()), lr=args.lr, betas=(args.beta1,args.beta2))}
-    start_epoch, step, best = 1, 0, math.inf
+    start_epoch, step, best, best_epoch = 1, 0, math.inf, 0
     if args.resume:
         checkpoint = torch.load(args.resume, map_location=device, weights_only=False)
         if checkpoint["architecture"] != asdict(config):
@@ -372,7 +385,8 @@ def main(argv=None):
                     "lambda_identity":args.lambda_identity, "identity":args.identity},
                     "optimizer":{"type":"Adam", "lr":args.lr,"betas":[args.beta1,args.beta2]},
                     "scheduler":requested_scheduler, "batch_size":args.batch_size,
-                    "validation_fraction":args.val_fraction, "num_workers":args.num_workers}
+                    "validation_fraction":args.val_fraction, "num_workers":args.num_workers,
+                    "patience":args.patience, "min_delta":args.min_delta}
         mismatches = [key for key, value in expected.items()
                       if saved.get(key) != value and not (key == "scheduler" and starting_schedule_at_boundary)]
         if mismatches:
@@ -384,6 +398,7 @@ def main(argv=None):
         for k, opt in opts.items(): opt.load_state_dict(checkpoint["optimizer_state_dicts"][k])
         start_epoch, step = checkpoint["epoch"] + 1, checkpoint["global_step"]
         best = checkpoint["best_validation"]
+        best_epoch = checkpoint.get("best_epoch", checkpoint["epoch"])
         restore_rng(checkpoint["rng_state"])
     if start_epoch > args.epochs:
         raise SystemExit(f"Checkpoint is already at epoch {start_epoch - 1}; set --epochs above that epoch to resume.")
@@ -408,7 +423,7 @@ def main(argv=None):
         json.dumps({"source": "train holdout", "batch_size": 1,
                     "image_size": [256, 256], "samples": preview_manifest}, indent=2),
         encoding="utf-8")
-    (exp / "config.json").write_text(json.dumps({**vars(args), "dataset_root":str(root), "device":str(device),
+    (exp / "config.json").write_text(json.dumps({**vars(args), "dataset_root":str(root), "device":str(device), "gpu_name":torch.cuda.get_device_name(device) if device.type == "cuda" else None,
         "architecture":asdict(config), "manifest_sha256":manifest_hash, "code_revision":code_revision()},
         default=str, indent=2), encoding="utf-8")
     csv_path = exp / "metrics.csv"
@@ -418,8 +433,12 @@ def main(argv=None):
         writer = csv.DictWriter(f, fieldnames=columns); writer.writeheader()
         mse, l1 = nn.MSELoss(), nn.L1Loss()
         last_epoch = start_epoch - 1
+        stale_epochs = 0
+        best_epoch = locals().get("best_epoch", 0)
+        stop_reason = "maximum epochs reached"
         for epoch in range(start_epoch, args.epochs + 1):
             last_epoch = epoch
+            print(f"Starting epoch {epoch}/{args.epochs} ({len(train_loader)} batches)", flush=True)
             train_loader.generator.manual_seed(args.seed + epoch)
             current_lr = lr_for_epoch(args, epoch)
             for optimizer in opts.values():
@@ -446,12 +465,27 @@ def main(argv=None):
             row={"epoch":epoch,"global_step":step,**train_metrics,**{"val_"+k:v for k,v in val.items()},"lr":opts["G"].param_groups[0]["lr"],"duration_seconds":duration}
             writer.writerow(row); f.flush()
             print("epoch {}/{} step={} G={:.4f} cycle={:.4f} D_A={:.4f} D_B={:.4f} val_G={:.4f} {:.1f}s".format(epoch,args.epochs,step,train_metrics["G_total"],train_metrics["cycle"],train_metrics["D_A"],train_metrics["D_B"],val["G_total"],duration),flush=True)
-            if val["G_total"] < best:
+            if val["G_total"] < best - args.min_delta:
                 best=val["G_total"]
+                best_epoch = epoch
+                stale_epochs = 0
                 save_checkpoint(exp/"best.pt",config,models,opts,epoch,step,best,args,rng_state(),manifest_hash,code_revision())
+                best_ckpt = torch.load(exp/"best.pt", map_location=device, weights_only=False)
+                best_ckpt["best_epoch"] = best_epoch
+                best_ckpt["validation_G_total"] = best
+                torch.save(best_ckpt, exp/"best.pt")
+            else:
+                stale_epochs += 1
             if epoch % args.checkpoint_every == 0:
                 save_checkpoint(exp/f"epoch-{epoch:04d}.pt",config,models,opts,epoch,step,best,args,rng_state(),manifest_hash,code_revision())
-    (exp/"training_complete.json").write_text(json.dumps({"last_epoch":last_epoch,"global_step":step,"best_validation_G_total":best},indent=2),encoding="utf-8")
+            if stale_epochs >= args.patience:
+                stop_reason = f"early stopping: val_G_total did not decrease by min_delta={args.min_delta} for {args.patience} consecutive epochs"
+                print(f"Stopping after epoch {epoch}: {stop_reason}", flush=True)
+                break
+        print(f"Training stopped: {stop_reason}; best epoch={best_epoch}, best validation G_total={best:.6f}", flush=True)
+        (exp/"training_complete.json").write_text(json.dumps({"last_epoch":last_epoch,"global_step":step,"best_epoch":best_epoch,"best_validation_G_total":best,"monitor":"val_G_total","mode":"min","patience":args.patience,"min_delta":args.min_delta,"stop_reason":stop_reason},indent=2),encoding="utf-8")
+        best_ckpt=torch.load(exp/"best.pt",map_location=device,weights_only=False)
+        for model,key in zip(models,("G_AB","G_BA","D_A","D_B")): model.load_state_dict(best_ckpt["model_state_dicts"][key],strict=True)
     if not args.skip_test:
         if not (exp/"best.pt").is_file():
             raise RuntimeError("No best checkpoint is available; resume checkpoint folder must contain best.pt")

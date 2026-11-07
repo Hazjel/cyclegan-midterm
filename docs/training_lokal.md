@@ -1,6 +1,6 @@
 # Training dan tuning lokal CycleGAN
 
-`scripts/train_cyclegan.py` memakai package lokal `cyclegan/` dan API model serta loader yang sudah ada. Tidak ada pretrained weights. Default root mengikuti README: `E:\midterm\data\horse2zebra` (repo berada di `E:\midterm\cyclegan-midterm`). Override dengan `--dataset-root` bila folder final ditempatkan di lokasi lain. Script hanya membaca manifest/gambar melalui loader; ia tidak menulis ke dataset.
+`scripts/train_cyclegan.py` memakai package lokal `cyclegan/` dan API model serta loader yang sudah ada. Tidak ada pretrained weights. Default root adalah `E:\midterm\data_cleaned_v2`. Dataset ini berisi folder `trainA`, `trainB`, `testA`, `testB` dan tidak memiliki manifest; loader menemukan berkas gambar langsung dalam folder split tanpa menulis ke dataset. `--dataset-root` dapat mengubah path bila diperlukan.
 
 ## Setup dan mulai menjalankan
 
@@ -9,7 +9,7 @@ Gunakan environment dengan dependensi `requirements.txt` dan PyTorch yang menduk
 ```powershell
 Set-Location E:\midterm\cyclegan-midterm
 python -m pip install -r requirements.txt
-python scripts\train_cyclegan.py --device auto --epochs 100 --batch-size 1 --lr 0.0002 --seed 7 --num-workers 0
+python scripts\train_cyclegan.py --device auto --epochs 100 --batch-size 1 --lr 0.0002 --seed 7 --num-workers 0 --patience 10 --min-delta 0.0001
 ```
 
 `auto` memilih CUDA bila PyTorch mendeteksinya, selain itu CPU. GPU target RTX 4050 Laptop 6 GB memakai float32 dan batch awal 1. Kesesuaian memori harus dipastikan saat dijalankan; OOM memberi saran untuk tetap/mengurangi ke batch 1 atau memilih CPU. Jika import gagal, periksa `Get-Location` (harus root repo) dan keberadaan `cyclegan\__init__.py`; script juga menambahkan root repo berdasarkan lokasi file script.

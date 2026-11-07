@@ -13,18 +13,28 @@ class ImageDataset(Dataset):
         if split not in ("trainA", "trainB", "testA", "testB"):
             raise ValueError("split must be trainA, trainB, testA or testB")
         root = Path(root).resolve()
-        manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
-        if manifest["version"] != 1:
-            raise ValueError("Unsupported manifest version")
         self.paths = []
-        for row in manifest["samples"]:
-            path = (root / row["path"]).resolve()
-            if row["split"] not in ("trainA", "trainB", "testA", "testB") or path.parent != root / row["split"]:
-                raise ValueError("Manifest path escapes its dataset split")
-            if row["split"] == split:
-                if not path.is_file():
-                    raise FileNotFoundError(path)
-                self.paths.append(path)
+        manifest_path = root / "manifest.json"
+        if manifest_path.is_file():
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            if manifest["version"] != 1:
+                raise ValueError("Unsupported manifest version")
+            for row in manifest["samples"]:
+                path = (root / row["path"]).resolve()
+                if row["split"] not in ("trainA", "trainB", "testA", "testB") or path.parent != root / row["split"]:
+                    raise ValueError("Manifest path escapes its dataset split")
+                if row["split"] == split:
+                    if not path.is_file():
+                        raise FileNotFoundError(path)
+                    self.paths.append(path)
+        else:
+            # The supplied cleaned dataset is organized into split folders but
+            # has no manifest. Discover files in-place without modifying it.
+            split_dir = root / split
+            if not split_dir.is_dir():
+                raise FileNotFoundError(f"Required dataset split folder not found: {split_dir}")
+            self.paths = sorted(p.resolve() for p in split_dir.iterdir()
+                                if p.is_file() and p.suffix.lower() in {".jpg", ".jpeg", ".png", ".bmp", ".webp"})
         if not self.paths:
             raise ValueError(f"Empty domain: {split}")
         self.training = split.startswith("train")

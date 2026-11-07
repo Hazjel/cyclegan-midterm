@@ -119,7 +119,7 @@ D_A = PatchDiscriminator(config)
 D_B = PatchDiscriminator(config)
 ```
 
-Training dapat dimulai dengan `Set-Location E:\midterm\cyclegan-midterm` lalu `python scripts\train_cyclegan.py --device auto --batch-size 1`. Rincian loss, tuning, output, validasi dan resume ada di [panduan training lokal](docs/training_lokal.md); API dan kontrak tetap di [kontrak integrasi](docs/kontrak_integrasi.md).
+Training dapat dimulai dengan `Set-Location E:\midterm\cyclegan-midterm` lalu `python scripts\train_cyclegan.py --device auto --batch-size 1`. Default dataset sekarang `E:\midterm\data_cleaned_v2`. Folder ini tanpa manifest, sehingga loader memakai berkas dalam empat folder split secara langsung. Rincian loss, tuning, output, validasi dan resume ada di [panduan training lokal](docs/training_lokal.md); API dan kontrak tetap di [kontrak integrasi](docs/kontrak_integrasi.md).
 
 ## Pengujian dan hasil aktual
 
