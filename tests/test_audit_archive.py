@@ -7,7 +7,7 @@ import zipfile
 
 from PIL import Image
 
-from scripts.audit_archive import audit_archive
+from preprocessing.audit_archive import audit_archive
 
 
 class ArchiveAuditTests(unittest.TestCase):

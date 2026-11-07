@@ -2,7 +2,7 @@
 
 Kontrak teknis v1.1 untuk integrasi proyek kelompok. Ketentuan batch dan API berasal dari tahap implementasi pipeline tanggal 27 Oktober 2026; penyuntingan dokumentasi 28 Oktober 2026 tidak mengubah ketentuan tersebut. Loader evaluasi dipisah per domain. Arah domain tetap, sedangkan kapasitas arsitektur masih berupa baseline. Perubahan interface atau makna checkpoint perlu dicatat untuk koordinasi kelompok.
 
-Root dataset aktif adalah **`data/horse2zebra`**. Dataset dibagikan terpisah dan tidak disertakan dalam Git. Paketnya harus mencakup trainA/trainB/testA/testB, `manifest.json`, `metadata_corrected.csv`, dan `preparation_report.json`; lokasi distribusi final [BELUM DIBERIKAN]. Penghapusan `preproc.zip` dilaporkan pelaksana proyek dan dikonfirmasi pada sesi 27 Oktober 2026. Loader dan pemeriksaan folder final tidak membutuhkan ZIP.
+Root dataset aktif adalah **`data/horse2zebra`**. Dataset dibagikan terpisah dan tidak disertakan dalam Git. Paketnya harus mencakup trainA/trainB/testA/testB, `manifest.json`, `metadata_corrected.csv`, dan `preparation_report.json`; lokasi distribusi final [PERLU DILENGKAPI: bahan atau lokasi distribusi yang belum diserahkan]. Penghapusan `preproc.zip` dilaporkan pelaksana proyek dan dikonfirmasi pada sesi 27 Oktober 2026. Loader dan pemeriksaan folder final tidak membutuhkan ZIP.
 
 ## Penamaan dan kepemilikan
 
@@ -15,7 +15,7 @@ Root dataset aktif adalah **`data/horse2zebra`**. Dataset dibagikan terpisah dan
 | D_A | menilai real/fake dalam domain kuda |
 | D_B | menilai real/fake dalam domain zebra |
 
-Pembagian awal menempatkan arsitektur/API dan koordinasi pada Peran 1, pipeline pada Peran 2, pelatihan pada Peran 3, serta dokumentasi pada Peran 4. Kontribusi aktual yang diklarifikasi: pelaksana Peran 1 dan 4 juga mengambil alih pengerjaan teknis Peran 2. Nama/NIM pelaksana dan penanggung jawab awal tiap peran [BELUM DIISI]; kontribusi anggota lain yang belum dilaporkan tidak diasumsikan. Implementasi training, tuning dan checkpoint tetap menjadi tanggung jawab Peran 3 dan belum tersedia. Rincian kontribusi dicatat dalam README dan laporan.
+Pembagian awal menempatkan arsitektur/API dan koordinasi pada Peran 1, pipeline pada Peran 2, pelatihan pada Peran 3, serta dokumentasi pada Peran 4. Kontribusi aktual yang diklarifikasi: pelaksana Peran 1 dan 4 juga mengambil alih pengerjaan teknis Peran 2. Nama/NIM pelaksana dan penanggung jawab awal tiap peran [PERLU DILENGKAPI: nama/NIM pelaksana dan penanggung jawab awal setiap peran]; kontribusi anggota lain yang belum dilaporkan tidak diasumsikan. Implementasi training, tuning dan checkpoint tetap menjadi tanggung jawab Peran 3; pada inventaris lokal 31 Oktober 2026 belum ditemukan kode atau artefaknya. Pada integrasi 3 November 2026, commit remote `5fe225b` menyediakan `scripts/train_cyclegan.py` dan `scripts/evaluate_cyclegan.py`; hasil run belum terverifikasi. Gunakan `--dataset-root data/horse2zebra` secara eksplisit dari root repository. Peran 4 kini dikerjakan bersama beberapa anggota; identitas penyunting dan paket kerja perlu dicatat terpisah dari pelaksana kode dalam [koordinasi dokumentasi](koordinasi_dokumentasi.md). Rincian kontribusi dicatat dalam README dan laporan.
 
 ## Pipeline data → model dan pelatihan
 
@@ -25,7 +25,7 @@ Satu batch adalah dictionary dengan dua key wajib:
 batch = {"A": tensor_kuda, "B": tensor_zebra}
 ```
 
-Struktur tersebut dihasilkan `create_dataloaders(root)["train"]` yang sudah diimplementasikan pada `cyclegan/data.py`. Metadata/path pada manifest bukan input model. Loader `testA` dan `testB` menghasilkan tensor domain tunggal `[N,3,256,256]` secara terpisah; semua sampel dikunjungi sekali dan batch terakhir tetap disertakan. Jangan menggabungkan loader test dengan `zip` atau menyamakan panjangnya dengan mengulang sampel.
+Struktur tersebut dihasilkan `create_dataloaders(root)["train"]` yang diimplementasikan pada `preprocessing/data.py` sejak penataan 3 November 2026. Ekspor publik dari `cyclegan` tetap berupa re-export langsung, tanpa wrapper. Folder `preprocessing/` adalah kode; `data/horse2zebra` adalah hasil dataset yang tetap. Metadata/path pada manifest bukan input model. Loader `testA` dan `testB` menghasilkan tensor domain tunggal `[N,3,256,256]` secara terpisah; semua sampel dikunjungi sekali dan batch terakhir tetap disertakan. Jangan menggabungkan loader test dengan `zip` atau menyamakan panjangnya dengan mengulang sampel.
 
 Contoh integrasi untuk Peran 3 (dari root repository, `num_workers=0`):
 
@@ -40,7 +40,7 @@ test_A = next(iter(loaders["testA"]))       # tensor kuda
 test_B = next(iter(loaders["testB"]))       # tensor zebra
 ```
 
-Loader membaca gambar dan `manifest.json` pada folder final secara langsung. Augmentasi saat loading, normalisasi dan sampling unpaired berada di `cyclegan/data.py`; gambar, manifest dan split tidak diubah. Peran 3 dapat langsung memakai pipeline tanpa persiapan arsip ulang. Jika menambah worker di Windows, bungkus pembuatan/iterasi loader dalam main guard sebagaimana contoh README.
+Loader membaca gambar dan `manifest.json` pada folder final secara langsung. Augmentasi saat loading, normalisasi dan sampling unpaired berada di `preprocessing/data.py`; gambar, manifest dan split tidak diubah. Peran 3 dapat langsung memakai pipeline tanpa persiapan arsip ulang. Jika menambah worker di Windows, bungkus pembuatan/iterasi loader dalam main guard sebagaimana contoh README.
 
 - Setiap tensor mempunyai shape `[N,3,H,W]`, urutan NCHW, urutan kanal **RGB**, dtype `torch.float32`, nilai finite dalam **[-1,1]**. Batch tidak kosong.
 - Kontrak data proyek sekarang: H=W=256. API model juga mendukung H/W >=32 dan kelipatan 4; bukan dukungan untuk ukuran arbitrer. Kedua tensor dalam batch proyek memakai N/H/W yang sama agar integrasi sederhana.
@@ -55,7 +55,7 @@ Loader membaca gambar dan `manifest.json` pada folder final secara langsung. Aug
 
 Model memvalidasi rank, batch, kanal, dimensi, dtype, rentang, dan finite pada setiap forward. Tidak ada resize, convert, normalisasi, atau clipping diam-diam. Pemeriksaan nilai menggunakan `.item()` sehingga dapat menyinkronkan CPU/GPU. AMP dan dtype selain float32 belum menjadi kontrak; penambahan AMP pada Peran 3 memerlukan peninjauan validasi dan pengujian seluruh jalur cycle.
 
-Pemeriksaan aktif: `python scripts/check_data.py --root data/horse2zebra --output tmp/pemeriksaan_data_baru.json`. Gunakan output baru agar bukti historis tidak tertimpa. Script membutuhkan folder final beserta manifest/preparation report, bukan ZIP. `prepare_data.py` dan `audit_archive.py` tetap merupakan utilitas opsional berbasis ZIP; tanpa `preproc.zip` asli, reproduksi persiapan/audit arsip lengkap belum dapat diulang. Hash/provenance dan bukti lama dipertahankan.
+Pemeriksaan aktif: `python -m preprocessing.check_data --root data/horse2zebra --output tmp/pemeriksaan_data_baru.json`. Gunakan output baru agar bukti historis tidak tertimpa. Script membutuhkan folder final beserta manifest/preparation report, bukan ZIP. `preprocessing/prepare_data.py` dan `preprocessing/audit_archive.py` tetap merupakan utilitas opsional berbasis ZIP; tanpa `preproc.zip` asli, reproduksi persiapan/audit arsip lengkap belum dapat diulang. Hash/provenance dan bukti lama dipertahankan. Pemetaan lokasi lama ke baru tersedia pada README; kontrak batch dan arsitektur v1.1 tidak berubah.
 
 ## Pelatihan Peran 3 → model
 
@@ -110,7 +110,7 @@ Semua nilai `asdict(config)` wajib disimpan:
 
 `architecture_version` mewakili keputusan tetap dalam kode: kernel/stride/padding, dua down/up sampling, normalisasi non-affine tanpa running stats, bias convolution, aktivasi dan ketiadaan dropout/sigmoid. Jika keputusan tetap berubah, ubah versi dan dokumentasikan; jangan menganggap kesamaan shape state_dict menjamin kesamaan perilaku model. Nilai konfigurasi divalidasi saat konstruksi; versi yang tidak didukung ditolak.
 
-Script training menyimpan payload checkpoint dengan ketentuan berikut:
+Skrip training menyediakan penyimpanan payload checkpoint berikut; keberhasilan checkpoint/resume masih perlu dibuktikan melalui pengujian run:
 
 | Key wajib | Isi |
 |---|---|

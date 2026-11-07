@@ -1,22 +1,24 @@
 # Laporan Proyek Kelompok: CycleGAN Kuda ↔ Zebra
 
+**Pembaruan integrasi 3 November 2026:** commit remote anggota lain `5fe225b` menambahkan `scripts/train_cyclegan.py`, `scripts/evaluate_cyclegan.py` dan [panduan training](training_lokal.md). Skrip dipertahankan bersama penataan preprocessing. Pernyataan belum ditemukannya implementasi pada inventaris 31 Oktober di bawah adalah kondisi lokal saat itu, bukan status kode terkini. Default CLI yang tersedia adalah LSGAN-MSE, cycle L1 berbobot 10, identity L1 berbobot 5, Adam lr=0,0002 dengan betas=(0,5;0,999), 100 epoch, batch 1, seed 7, dan holdout train 5%. Ini konfigurasi kode, bukan konfigurasi run yang sudah dibuktikan. Gunakan `--dataset-root data/horse2zebra` secara eksplisit. Hasil training, checkpoint/resume dan kualitas terjemahan belum diverifikasi pada sesi integrasi; bagian eksperimen tetap perlu dilengkapi.
+
 Tema tugas: **Vibe Coding Generative AI from Scratch**.
 
-**Status:** draf laporan akademik. Rancangan, implementasi fondasi model dan pipeline data tersedia. Pelatihan, tuning, dan evaluasi kualitas belum dilakukan. Hasil pengujian teknis yang disajikan berasal dari bukti 27 Oktober 2026; penyuntingan dokumentasi dilakukan 28 Oktober 2026.
+**Status:** draf kompilasi kelompok, diperbarui 31 Oktober 2026. Fondasi model dan pipeline tersedia. Inventaris kode, folder dan daftar isi arsip lokal belum menemukan implementasi atau hasil pelatihan yang dapat diverifikasi; kegiatan di luar workspace perlu dikonfirmasi Peran 3. Bukti tes/data berasal dari 27 Oktober 2026; penyuntingan 28 Oktober dan kompilasi sekarang tidak mengubah tanggal hasil tersebut.
 
 ## 1. Identitas dan kontribusi kelompok
 
 | Identitas | Isian |
 |---|---|
-| Mata kuliah | [NAMA MATA KULIAH] |
-| Program studi / institusi | [PROGRAM STUDI DAN INSTITUSI] |
-| Kelas / kelompok | [KELAS] / [NAMA ATAU NOMOR KELOMPOK] |
-| Dosen pengampu | [NAMA DOSEN] |
-| Anggota | [NAMA DAN NIM SETIAP ANGGOTA] |
+| Mata kuliah | [PERLU DILENGKAPI: nama mata kuliah] |
+| Program studi / institusi | [PERLU DILENGKAPI: program studi dan institusi] |
+| Kelas / kelompok | [PERLU DILENGKAPI: kelas] / [PERLU DILENGKAPI: nama atau nomor kelompok] |
+| Dosen pengampu | [PERLU DILENGKAPI: nama dosen pengampu] |
+| Anggota | [PERLU DILENGKAPI: nama dan NIM setiap anggota] |
 
 Pembagian awal terdiri atas Peran 1 (Prompt Engineer & LLM Navigator), Peran 2 (Data Pipeline & Preprocessing Engineer), Peran 3 (Training Loop & Hyperparameter Tuning Engineer), dan Peran 4 (Lead Documentarian & Error Handler).
 
-Kontribusi aktual yang diklarifikasi: pelaksana Peran 1 dan 4 juga mengambil alih pengerjaan teknis Peran 2 dengan bantuan LLM. Nama/NIM pelaksana: [BELUM DIISI]. Penanggung jawab awal Peran 2 dan penanggung jawab Peran 3: [BELUM DIISI]. Implementasi training Peran 3 belum tersedia. Sebutan “orang 2” dalam nama berkas dan arsip menunjukkan lingkup tugas, bukan identitas pembuat implementasi. Kontribusi anggota lain, pembagian waktu, persetujuan kelompok, dan refleksi pribadi yang belum diberikan tidak diasumsikan.
+Kontribusi aktual yang diklarifikasi: pelaksana Peran 1 dan 4 juga mengambil alih pengerjaan teknis Peran 2 dengan bantuan LLM. Nama/NIM pelaksana: [PERLU DILENGKAPI: identitas yang belum diisi]. Penanggung jawab awal Peran 2 dan penanggung jawab Peran 3: [PERLU DILENGKAPI: identitas yang belum diisi]. Implementasi/artefak training Peran 3 belum ditemukan pada cakupan pemeriksaan berkas. Sebutan “orang 2” dalam nama berkas dan arsip menunjukkan lingkup tugas, bukan identitas pembuat implementasi. Klarifikasi terbaru menyatakan Peran 4 dikerjakan bersama beberapa anggota; [PERLU DILENGKAPI: nama/NIM penyunting, bagian, tanggal dan hasil pemeriksaan masing-masing]. Kontribusi anggota lain, pembagian waktu, persetujuan kelompok, dan refleksi pribadi yang belum diberikan tidak diasumsikan. [Koordinasi dokumentasi](koordinasi_dokumentasi.md) memisahkan penanggung jawab awal, pelaksana aktual dan penyunting serta mengusulkan paket percakapan/arsitektur, bukti pipeline, eksperimen, dan penggabungan laporan; belum merupakan pembagian bernama yang disetujui tim.
 
 ## 2. Pendahuluan dan tujuan
 
@@ -28,13 +30,15 @@ Tujuan teknisnya adalah merancang empat model CycleGAN, menyediakan pipeline dat
 
 Panduan tugas mengharuskan kolaborasi dengan LLM, pencatatan prompt/respons dan debugging, serta melarang penyalinan implementasi lengkap dari tutorial/GitHub. Dokumentasi resmi diperbolehkan sebagai referensi fungsi dasar. Identitas dan hash panduan tercatat dalam [inventaris](bukti/lingkungan.json).
 
-Proses yang tercatat meliputi perumusan kebutuhan dan batas peran melalui prompt, pemeriksaan berkas, perancangan antarmuka, penyusunan kode dengan bantuan LLM, pengujian, serta penanganan masalah. API dasar diperiksa melalui Context7. Model menggunakan layer PyTorch dan autograd tanpa pretrained weights. Uraian proses ini bukan audit orisinalitas menyeluruh terhadap semua sumber eksternal.
+Pengembangan menggunakan **GPT/ChatGPT** menurut klarifikasi tim. Percakapan sumber memperlihatkan perumusan kebutuhan, ringkasan implementasi/pengujian dan penyuntingan; kode serta hasil tes lokal menjadi dukungan teknis terpisah. Nama atau versi model GPT tidak ditentukan dari label produk ChatGPT. Referensi API dasar dan pengungkapan metode tetap dipertahankan; uraian ini bukan audit orisinalitas menyeluruh.
 
-[Log interaksi](log_interaksi.md), [prompt tugas awal](bukti/prompt_pengguna.md), [prompt tahap pipeline](bukti/prompt_orang2.md), dan [diskusi teknis Claude](diskusi_claude.md) mempertahankan bukti proses. [Percakapan ChatGPT “Bangun fondasi codebase CycleGAN”](https://chatgpt.com/s/cx_6ae56f2a66c4819196c604c1f9cd4f05) diberikan dan berhasil dibuka pada 31 Oktober 2026; halaman tersebut memuat fondasi model, penyesuaian dataset final, serta penyuntingan dokumentasi. Cakupan dan batas buktinya dicatat pada bagian 10 log interaksi. Review AI tidak diperlakukan sebagai persetujuan dosen atau kontribusi anggota manusia. Tautan/ekspor sesi pipeline dan training serta penjelasan penguasaan materi masing-masing anggota: [PERLU DILENGKAPI KELOMPOK].
+[Log interaksi](log_interaksi.md), [prompt tugas awal](bukti/prompt_pengguna.md), [prompt tahap pipeline](bukti/prompt_orang2.md), dan [diskusi GPT/ChatGPT](diskusi_llm.md) menjadi rujukan proses dengan batas bukti yang dinyatakan. [Percakapan “Bangun fondasi codebase CycleGAN”](https://chatgpt.com/s/cx_6ae56f2a66c4819196c604c1f9cd4f05) yang dicatat pada 31 Oktober 2026 berhasil dibaca ulang melalui browser pada 3 November 2026: halaman ChatGPT menampilkan tiga rangkaian tentang fondasi, penggunaan dataset final dan penyuntingan akademik. Detail tools serta sesi implementasi pipeline/training tidak seluruhnya tercakup. [PERLU DILENGKAPI: ekspor GPT/ChatGPT sesi lain dan penjelasan anggota].
+
+Koreksi atribusi 3 November 2026: permintaan Claude dalam prompt dan berkas lokal berlabel Claude/Opus bukan bukti eksekusi yang tervalidasi. Klaim panggilan CLI, review independen serta putusan reviewer dari arsip tersebut ditarik dari narasi hasil dan daftar bukti valid. Teks/metadata aslinya tetap tersimpan dan tidak diatribusikan ulang kepada GPT; status setiap arsip dijelaskan dalam register pada diskusi LLM. Hasil tes, angka dataset, konfigurasi dan timestamp asli tidak diubah. Layanan penelusuran tetap memberi `Cache miss`, tetapi browser berhasil membaca sumber; riwayat kegagalan akses sebelumnya tidak dihapus.
 
 ## 4. Dataset dan provenance
 
-Dataset aktif ditempatkan pada `data/horse2zebra` dan dibagikan terpisah dari Git. Paket final memuat trainA/trainB/testA/testB, manifest, metadata terkoreksi dan preparation report. Lokasi distribusi paket final: [BELUM DIBERIKAN].
+Dataset aktif ditempatkan pada `data/horse2zebra` dan dibagikan terpisah dari Git. Paket final memuat trainA/trainB/testA/testB, manifest, metadata terkoreksi dan preparation report. Lokasi distribusi paket final: [PERLU DILENGKAPI: lokasi atau tautan distribusi yang ditetapkan tim]. Inventaris juga menemukan `data.zip` lokal berisi 2.608 PNG final dan manifest yang identik dengan folder. Arsip itu tidak dianggap sebagai artefak training, pengganti ZIP preprocessing lama, atau paket distribusi yang sudah disetujui; integritas seluruh isinya tidak diuji ulang.
 
 | Split | Domain | Jumlah akhir |
 |---|---|---:|
@@ -85,11 +89,11 @@ Konfigurasi arsitektur diberi versi dan disimpan bersama empat state_dict agar r
 
 `cyclegan/models.py` mengimplementasikan residual block, Generator dan PatchDiscriminator. `cyclegan/config.py` menyediakan dataclass immutable dan validasi konfigurasi. Setiap konstruktor mengalokasikan parameter baru; forward memvalidasi shape, dtype, rentang dan finite tanpa transformasi tersembunyi.
 
-`cyclegan/data.py` membaca folder final berdasarkan manifest. Augmentasi train berlangsung saat loading: resize bicubic 286, crop acak 256, flip horizontal 0,5, kemudian normalisasi `2*(pixel/255)-1`. Transform domain independen. Panjang epoch=max(trainA,trainB)=1.311; domain besar dikunjungi sekali dan domain kecil disampling acak dengan pengembalian. Test tidak memakai transformasi acak. Tidak ada gambar augmentasi offline baru.
+`preprocessing/data.py` membaca folder final berdasarkan manifest. Augmentasi train berlangsung saat loading: resize bicubic 286, crop acak 256, flip horizontal 0,5, kemudian normalisasi `2*(pixel/255)-1`. Transform domain independen. Panjang epoch=max(trainA,trainB)=1.311; domain besar dikunjungi sekali dan domain kecil disampling acak dengan pengembalian. Test tidak memakai transformasi acak. Tidak ada gambar augmentasi offline baru.
 
-`scripts/check_data.py` memeriksa dataset final, mengiterasi loader dan menjalankan forward batch nyata pada empat model. `prepare_data.py` dan `audit_archive.py` dipertahankan sebagai utilitas ZIP opsional. Panduan instalasi, penempatan dataset dan penggunaan terdapat dalam [README](../README.md). Status teknis pipeline dirangkum dalam [dokumen Peran 2](status_orang2.md).
+`preprocessing/check_data.py` memeriksa dataset final, mengiterasi loader dan menjalankan forward batch nyata pada empat model. `preprocessing/prepare_data.py` dan `preprocessing/audit_archive.py` dipertahankan sebagai utilitas ZIP opsional. Penataan 3 November 2026 memisahkan kode tersebut ke `preprocessing/` dari model/config di `cyclegan/`, tanpa mengubah implementasi, dataset hasil di `data/horse2zebra`, atau API publik loader. Tanggal hasil lama tetap berlaku. Panduan penggunaan dan pemetaan path terdapat dalam [README](../README.md); status pipeline dirangkum dalam [dokumen Peran 2](status_orang2.md).
 
-Loss CycleGAN, optimizer, training loop, checkpoint pelatihan dan tuning **belum diimplementasikan**. Tanggung jawab tersebut tetap berada pada Peran 3.
+Pada kode yang diperiksa belum ditemukan implementasi loss CycleGAN, optimizer, training loop atau checkpoint pelatihan. Pencarian berkas, folder dan daftar isi ZIP lokal tidak menemukan log epoch/run, grafik metrik, checkpoint, notebook training atau contoh keluaran. Dua laporan pemeriksaan data menyatakan `training_performed=false`; ini berlaku untuk pemeriksaan tersebut, bukan bukti bahwa tim tidak pernah melatih model di tempat lain. [PERLU DILENGKAPI: konfirmasi Peran 3 dan artefak pekerjaan di luar workspace jika ada].
 
 ## 7. Pengujian teknis dan hasil aktual
 
@@ -111,35 +115,87 @@ Panjang epoch train tidak menjamin semua sampel domain kecil terpilih pada epoch
 
 Bukti: [log tes](bukti/tes_dataset_final_tanpa_zip.txt), [pemeriksaan data/model](bukti/pemeriksaan_dataset_final_tanpa_zip.json), [preservasi dataset](bukti/preservasi_dataset_final_tanpa_zip.json), dan [pemeriksaan fondasi awal](bukti/pemeriksaan.txt). Riwayat kegagalan awal dan perbaikannya tetap tersedia dalam log interaksi. Hasil teknis ini belum membuktikan kualitas penerjemahan, kestabilan training adversarial, atau kecukupan memori training.
 
-## 8. Rencana dan hasil eksperimen pelatihan
+Catatan pengujian struktur 3 November 2026: setelah implementasi data/utilitas dipindahkan ke `preprocessing/`, seluruh 21 tes dan pemeriksaan seluruh dataset/batch nyata kembali berhasil. Identitas ekspor publik serta kedua urutan import diperiksa, dan hasil numerik sama dengan bukti lama. Keluaran tersimpan di `tmp/preprocessing_2026-11-03/`; dataset, arsitektur dan bukti historis tetap sama menurut hash. Ini verifikasi refactoring, bukan eksperimen pelatihan.
 
-**Belum dilakukan — [PERLU DILENGKAPI PERAN 3].**
+## 8. Konfigurasi pelatihan dan rancangan eksperimen
 
-Bagian ini perlu memuat formulasi dan bobot loss adversarial/cycle/identity, optimizer, learning rate/scheduler, jumlah epoch, batch size, seed, urutan pembaruan G/D, konfigurasi data/model aktual, perangkat serta pemakaian memori. Setiap eksperimen harus mempunyai konfigurasi, alasan perubahan dan log yang dapat ditelusuri.
+**Status bukti:** belum ditemukan implementasi, konfigurasi run atau hasil pelatihan pada berkas yang diperiksa 31 Oktober 2026. [PERLU DILENGKAPI: konfirmasi Peran 3 mengenai pekerjaan di luar workspace]. Bagian ini membedakan konfigurasi kode yang tersedia dari konfigurasi pelatihan yang benar-benar digunakan.
 
-Hasil yang belum tersedia: grafik loss, metrik beserta protokol evaluasi, perbandingan tuning, checkpoint/resume, contoh penerjemahan dua arah dan rekonstruksi cycle, serta analisis kegagalan pada gambar nyata. Tensor dummy tidak dipakai sebagai contoh hasil training. Jika metrik kelak menggunakan jaringan pretrained, bedakan jaringan metrik dari model CycleGAN yang dilatih dari nol dan cocokkan penggunaannya dengan aturan tugas.
+| Komponen | Bukti yang tersedia / kekurangan |
+|---|---|
+| Model | Default kode: 64 filter generator/discriminator, sembilan residual block, InstanceNorm non-affine, init_std=0,02; [PERLU DILENGKAPI: konfigurasi arsitektur aktual setiap run] |
+| Data | Folder final dan manifest pada bagian 4; augmentasi/normalisasi pada bagian 6; [PERLU DILENGKAPI: manifest/hash dan konfigurasi loader aktual setiap run] |
+| Loss | Discriminator menghasilkan skor mentah; [PERLU DILENGKAPI: formulasi adversarial, cycle/identity, bobot serta reduction yang dipakai] |
+| Optimasi | [PERLU DILENGKAPI: optimizer, learning rate, parameter optimizer, scheduler, strategi pembaruan G/D] |
+| Durasi dan batch | [PERLU DILENGKAPI: epoch/step, batch size, seed, konfigurasi RNG, waktu dan penggunaan memori yang diukur] |
+| Validasi/evaluasi | [PERLU DILENGKAPI: split validasi dari train, aturan pemilihan checkpoint, metrik/protokol dan penggunaan test akhir] |
+| Reproduksi run | [PERLU DILENGKAPI: ID run yang benar-benar dibuat, versi kode/paket, perangkat, log, checkpoint dan hasil uji resume] |
 
-Peran 3 perlu mengambil validasi dari train sebelum tuning/pemilihan checkpoint. Test digunakan untuk evaluasi akhir, bukan keputusan hyperparameter. Belum ada keputusan split validasi yang dilaporkan.
+Rancangan berikut adalah **usulan yang belum disepakati atau dijalankan**, bukan riwayat eksperimen:
 
-## 9. Pembahasan dan keterbatasan
+1. Tetapkan validasi dari train sebelum tuning, catat kebijakan split dan manifest/hash, lalu pastikan test tidak digunakan untuk memilih hyperparameter.
+2. Verifikasi satu langkah pembaruan G/D dan jalur cycle dengan konfigurasi yang dilengkapi Peran 3; rekam finite loss/gradient, penggunaan memori dan kondisi berhenti jika gagal.
+3. Jalankan baseline yang terdokumentasi. Setiap tuning membandingkan perubahan yang dinyatakan eksplisit dengan protokol validasi yang tetap, disertai alasan dan log asli.
+4. Uji checkpoint/resume serta contoh penerjemahan dua arah dan rekonstruksi cycle pada data evaluasi yang dapat ditelusuri.
+
+**Hasil training:** [PERLU DILENGKAPI: log run, grafik loss, metrik/protokol, konfigurasi pembanding, checkpoint, gambar keluaran dan analisis kegagalan dari Peran 3]. Tidak ada angka hasil eksperimen yang diisi dari tensor dummy, hasil unit test atau rancangan di atas. Jika metrik kelak memakai jaringan pretrained, bedakan jaringan metrik dari model CycleGAN dan cocokkan penggunaannya dengan aturan tugas.
+
+## 9. Studi debugging
+
+[Register debugging](debugging.md) memisahkan gejala, hipotesis, bukti sebab, usulan, tindakan aktual, pengujian ulang dan status setiap kejadian. Draf prompt debugging yang disusun pada sesi kompilasi diberi label agar tidak disalahartikan sebagai percakapan historis.
+
+| Kelompok kejadian | Bukti dan pelajaran yang dapat ditulis |
+|---|---|
+| DBG-01/02/03 — impor pada tahap test-first | Traceback lengkap tersimpan; tes ditulis sebelum modul tersedia menurut kronologi. Output lanjutan menunjukkan import/suite berhasil. Ini penyelesaian tahap implementasi, bukan eror training |
+| DBG-04 — variasi augmentasi | Log melaporkan benturan fixture dengan deduplikasi; tes kini tercatat lulus. Fixture gagal/traceback belum tersedia, sehingga sebab historis belum dibuktikan ulang secara independen |
+| DBG-05 — helper traversal | Log melaporkan unpacking path sebelum validasi produksi. Helper kini memakai split pertama dan tes penolakan traversal tercatat lulus; snapshot gagal belum tersedia |
+| DBG-06/07 — lingkungan dan PDF | Kegagalan tool terminal hanya tercatat ringkas; akar penyebab belum terbukti. PDF tetap memberi warning struktur, tetapi lima halaman teks dapat dibaca. Keduanya tidak membuktikan bug model |
+| DBG-08/09 — proses dokumentasi dan akses chat | Konteks patch dipulihkan menurut log. Pengambilan ulang share link pada kompilasi gagal Cache miss; catatan akses terdahulu tidak ditimpa dan status tautan tidak disimpulkan mati |
+
+Traceback tersedia pada [kegagalan awal](bukti/kegagalan_awal.txt) dan [tes data awal](bukti/tes_data_awal.txt). Hasil uji ulang historis tercatat dalam [pemeriksaan fondasi](bukti/pemeriksaan.txt) dan [suite 21 tes](bukti/tes_dataset_final_tanpa_zip.txt). [PERLU DILENGKAPI: traceback lengkap yang hanya diringkas, fixture/versi saat gagal, prompt asli, nama penangan dan analisis kelompok].
+
+Tidak ada bug perilaku model/training baru yang terbukti pada sesi kompilasi. Peran 4 meneruskan kebutuhan diagnosis ke penanggung jawab modul; tidak mengubah kode agar sesuai narasi. Warning PDF, keterbatasan akses chat dan kelengkapan provenance debugging tetap menjadi tindak lanjut terbuka.
+
+## 10. Pembahasan dan keterbatasan
 
 Fondasi model dan pipeline dapat diintegrasikan melalui kontrak v1.1 dan memiliki bukti pengujian CPU. Masalah grayscale, metadata salah dan duplikasi piksel identik yang diketahui telah ditangani pada tahap persiapan.
 
 Evaluasi kelak berlaku untuk subset test yang telah disaring, bukan benchmark Kaggle penuh. Hash piksel belum mendeteksi semua kemiripan atau crop berbeda. Kapasitas training belum diukur, konfigurasi belum dituning, dan kualitas hasil belum dapat dinilai. Arsip preprocessing yang dihapus membatasi reproduksi penuh tahap sumber meskipun folder final tetap dapat diperiksa.
 
-Pembahasan eksperimen: [PERLU DILENGKAPI PERAN 3]. Refleksi pribadi, penguasaan materi, catatan kontribusi manusia terperinci, dan keputusan bersama: [PERLU DILENGKAPI KELOMPOK]. Keberadaan repository Git tidak dengan sendirinya membuktikan atribusi kontribusi individual; tidak ada commit baru dibuat sebagai bagian penyuntingan ini.
+Pembahasan eksperimen: [PERLU DILENGKAPI: konfigurasi, bukti dan hasil aktual dari Peran 3]. Refleksi pribadi, penguasaan materi, catatan kontribusi manusia terperinci, dan keputusan bersama: [PERLU DILENGKAPI: bahan asli dari anggota kelompok]. Keberadaan repository Git tidak dengan sendirinya membuktikan atribusi kontribusi individual; tidak ada commit baru dibuat sebagai bagian penyuntingan ini.
 
-## 10. Kesimpulan sementara dan kelengkapan laporan
+## 11. Kesimpulan sementara dan kelengkapan laporan
 
-Rancangan dan implementasi fondasi CycleGAN serta pipeline data telah tersedia dan didukung bukti pengujian teknis. Keberhasilan penerjemahan gambar belum dapat disimpulkan karena pelatihan dan evaluasi kualitas belum dilakukan.
+Rancangan dan implementasi fondasi CycleGAN serta pipeline data telah tersedia dan didukung bukti pengujian teknis. Keberhasilan penerjemahan gambar belum dapat disimpulkan karena bukti pelatihan dan evaluasi kualitas belum tersedia pada workspace yang diperiksa. Aktivitas di luar cakupan tersebut perlu dikonfirmasi tim.
 
-Lampiran tersedia: prompt, log interaksi, tautan chat fondasi/penyesuaian/penyuntingan, respons review AI, kode, tes, audit, metadata sumber, manifest/preparation report dan hasil pemeriksaan. Informasi yang belum tersedia: identitas akademik/anggota, lokasi distribusi dataset final, kelengkapan tautan atau ekspor sesi lainnya, bukti kontribusi manusia terperinci, refleksi kelompok dan seluruh hasil eksperimen Peran 3.
+Lampiran valid tersedia: prompt, log interaksi dengan koreksi atribusi, sumber dan ringkasan GPT/ChatGPT, kode, tes, audit, metadata sumber, manifest/preparation report dan hasil pemeriksaan. Arsip atribusi yang belum terverifikasi disimpan terpisah secara status dan bukan dasar kesimpulan. Informasi yang belum tersedia: identitas akademik/anggota, lokasi distribusi dataset final, kelengkapan tautan atau ekspor sesi lainnya, bukti kontribusi manusia terperinci, refleksi kelompok dan seluruh hasil eksperimen Peran 3.
 
-## 11. Referensi dan lampiran
+## 12. Kelengkapan menurut rubrik
+
+Rubrik dibaca dari halaman 5 panduan yang tersedia. Tabel berikut menilai **kelengkapan bukti**, bukan memberikan skor kelompok.
+
+| Kriteria | Bobot | Bukti tersedia | Kekurangan / status |
+|---|---:|---|---|
+| Kualitas dan orisinalitas vibe coding | 30% | Prompt, alasan desain, implementasi modular dan percakapan GPT/ChatGPT bersumber | Sebagian; [PERLU DILENGKAPI: cakupan percakapan/variasi prompt dan penjelasan anggota]. Tidak ada audit orisinalitas menyeluruh |
+| Log interaksi dan dokumentasi LLM | 25% | Kronologi, ID katalog sesi, prompt, satu share link terdaftar, register debugging | Sebagian; [PERLU DILENGKAPI: ekspor sesi yang kurang, identitas peserta, analisis kelompok, traceback yang belum lengkap] |
+| Fungsionalitas model dan pelatihan | 25% | Bukti 21 tes, dataset/manifest dan batch nyata CPU | Fondasi/pipeline didukung; [PERLU DILENGKAPI: implementasi/run training, konfigurasi, grafik/metrik valid, checkpoint/resume dan contoh keluaran] |
+| Kerja sama dan manajemen integrasi | 20% | Kontrak, pemisahan penugasan/kontribusi/penyuntingan dan usulan paket dokumentasi | Sebagian; [PERLU DILENGKAPI: pemetaan nama/NIM, log kerja/suntingan, peninjauan anggota dan bukti penguasaan individu] |
+
+- [x] Dataset dan konfigurasi kode merujuk bukti yang tersedia.
+- [x] Hasil pengujian dipisahkan dari hasil eksperimen training.
+- [x] Riwayat, prompt, traceback, respons asli dan bukti historis dipertahankan.
+- [ ] Identitas, pembagian kerja dan kontribusi manusia lengkap.
+- [ ] Arsip percakapan dan bukti debugging seluruh tahap lengkap.
+- [ ] Hasil training dan evaluasi yang dapat ditelusuri tersedia.
+- [ ] Refleksi, peninjauan akhir serta kelengkapan referensi diserahkan anggota.
+
+Pembagian pengumpulan dan daftar bahan per anggota/lingkup terdapat dalam [koordinasi dokumentasi](koordinasi_dokumentasi.md). Laporan tetap **draf**, karena bukti wajib belum lengkap.
+
+## 13. Referensi dan lampiran
 
 1. *[CAK4KBB3 2026-1] Panduan Proyek 1 — Vibe Coding*, dokumen tugas lokal; identitas/hash pada [inventaris](bukti/lingkungan.json).
 2. [Horse2zebra Dataset, Balraj Ashwath](https://www.kaggle.com/datasets/balraj98/horse2zebra-dataset), metadata versi 1 tersimpan pada [arsip sumber](bukti/kaggle_metadata.json). Metadata mengacu pada Zhu, Park, Isola, Efros, *Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks*, ICCV 2017.
 3. Referensi fungsi dasar: [PyTorch](https://docs.pytorch.org/docs/stable/index.html) dan [Pillow](https://pillow.readthedocs.io/en/stable/). Penelusuran API melalui Context7 dicatat dalam log.
-4. [Kontrak integrasi](kontrak_integrasi.md), [status pipeline](status_orang2.md), [log interaksi](log_interaksi.md), dan [diskusi LLM](diskusi_claude.md).
+4. [Kontrak integrasi](kontrak_integrasi.md), [status pipeline](status_orang2.md), [log interaksi](log_interaksi.md), [diskusi GPT/ChatGPT](diskusi_llm.md), [register debugging](debugging.md), dan [koordinasi dokumentasi](koordinasi_dokumentasi.md).
 
-Format sitasi dan kelengkapan daftar pustaka sesuai ketentuan mata kuliah: [PERLU DILENGKAPI KELOMPOK].
+Format sitasi dan kelengkapan daftar pustaka sesuai ketentuan mata kuliah: [PERLU DILENGKAPI: bahan asli dari anggota kelompok].

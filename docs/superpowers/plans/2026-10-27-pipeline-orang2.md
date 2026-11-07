@@ -1,3 +1,5 @@
+> **Catatan atribusi, 3 November 2026:** dokumen ini arsip proses. Klaim Claude/Opus atau review independen di dalamnya belum terverifikasi dan dikecualikan dari dasar kesimpulan; checklist lama bukan bukti eksekusi alat. Tanggal dan isi asli di bawah dipertahankan. Rujukan aktif: [diskusi GPT/ChatGPT dan register arsip](../../diskusi_llm.md).
+
 # Pipeline orang 2
 
 Tujuan: memenuhi job desk halaman 2 panduan dan kontrak integrasi yang sudah ada.
